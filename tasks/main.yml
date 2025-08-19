@@ -1,18 +1,18 @@
 ---
 # tasks file for ansible-role-compose-stack
-- name: compose_stack | ensure dir exists
+- name: compose_stack ({{app}}) | ensure dir exists
   file:
-    path: "{{ app_dir }}"
+    path: "{{ app_dst_dir }}"
     state: directory
     mode: '0755'
 
-- name: compose_stack | copy compose.yml 
+- name: compose_stack ({{app}}) | copy compose.yml 
   template:
     src: "{{ compose_file }}"
-    dest: "{{ app_dir }}/docker-compose.yml"
+    dest: "{{ app_dst_dir }}/compose.yml"
     mode: '0644'
 
-- name: compose_stack | start compose stack
+- name: compose_stack ({{app}}) | start compose stack
   community.docker.docker_compose_v2:
-    project_src: "{{ app_dir }}"
+    project_src: "{{ app_dst_dir }}"
     state: present
