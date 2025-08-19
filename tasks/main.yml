@@ -8,7 +8,7 @@
 
 - name: compose_stack ({{app}}) | copy compose.yml 
   template:
-    src: "{{ compose_file }}"
+    src: "{{ compose_src_file }}"
     dest: "{{ app_dst_dir }}/compose.yml"
     mode: '0644'
 
