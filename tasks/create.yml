@@ -1,0 +1,29 @@
+---
+# create.yml
+- name: "stack ({{ stack.name }}) | create networks"
+  community.docker.docker_network:
+    name: "{{ item.name }}"
+    driver: "{{ item.driver | default('bridge') }}"
+    state: present
+  loop: "{{ stack.networks }}"
+  when: stack.networks is defined and stack.networks | length > 0
+
+- name: "stack ({{ stack.name }}) | create app dir"
+  ansible.builtin.file:
+    path:  "{{ stack.dst_dir }}"
+    state: "directory"
+    mode:  "{{ stack.dir.mode }}"
+
+- name: "stack ({{ stack.name }}) | render compose.yml"
+  ansible.builtin.template:
+    src:  "{{ stack.src_file }}"
+    dest: "{{ stack.dst_dir }}/compose.yml"
+    mode: "{{ stack.file.mode }}"
+  notify: restart compose stack
+
+- name: "stack ({{ stack.name }}) | start compose stack"
+  community.docker.docker_compose_v2:
+    project_src: "{{ stack.dst_dir }}"
+    state:       "present"
+
+...

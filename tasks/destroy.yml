@@ -1,0 +1,32 @@
+---
+# destroy.yml
+- name: "stack ({{ stack.name }}) | check if app dir exists"
+  ansible.builtin.stat:
+    path: "{{ stack.dst_dir }}"
+  register: stack_dst_dir_stat
+
+- name: "stack ({{ stack.name }}) | stop and remove compose stack"
+  community.docker.docker_compose_v2:
+    project_src:    "{{ stack.dst_dir }}"
+    state:          "absent"
+    remove_images:  "{{ stack.destroy.remove_images }}"
+    remove_volumes: "{{ stack.destroy.remove_volumes }}"
+  when:
+    - stack_dst_dir_stat.stat.isdir is defined
+    - stack_dst_dir_stat.stat.isdir
+
+- name: "stack ({{ stack.name }}) | remove app directory"
+  ansible.builtin.file:
+    path:  "{{ stack.dst_dir }}"
+    state: "absent"
+
+- name: "stack ({{ stack.name }}) | remove networks"
+  community.docker.docker_network:
+    name: "{{ item.name }}"
+    state: absent
+  loop: "{{ stack.networks }}"
+  when:
+    - stack.networks is defined and stack.networks | length > 0
+    - stack.destroy.remove_networks
+
+...

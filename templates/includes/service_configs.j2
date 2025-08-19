@@ -1,0 +1,12 @@
+{# includes/service_configs.j2 #}
+{% if svc.configs is defined and svc.configs | length > 0 %}
+    configs:
+{% for config in svc.configs %}
+      - source: "{{ config.source }}"
+        target: "{{ config.target }}"
+        uid: "{{ config.uid }}"
+        gid: "{{ config.gid }}"
+        mode: "{{ config.mode }}"
+{% endfor %}
+{% endif %}
+{# end #}

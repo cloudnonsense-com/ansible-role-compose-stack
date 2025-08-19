@@ -1,0 +1,23 @@
+---
+### NGINX-DEMO ###
+services:
+  nginxdemo:
+    image: "ubuntu/nginx:latest"
+    restart: "unless-stopped"
+
+    ports:
+      - "37080:80"
+
+    labels:
+      traefik:
+        enabled: true
+        pattern: "default"
+      raw: []
+
+    configs:
+      - source: "index.nginx-debian.html"
+        target: "/var/www/html/index.nginx-debian.html"
+        uid: "33"
+        gid: "33"
+        mode: "0644"
+...

@@ -1,0 +1,31 @@
+---
+### GRAFANA STACK ###
+services:
+  grafana:
+    container_name: "grafana"
+    image: "grafana/grafana-oss:11.5.1"
+    restart: "unless-stopped"
+
+    ports:
+      - "37005:3000"
+
+    labels:
+      traefik:
+        enabled: true
+        pattern: "default"
+      raw: []
+
+  influxdb:
+    container_name: "influxdb"
+    image: "influxdb:1.8.3"
+    restart: "unless-stopped"
+
+    ports:
+      - "8086:8086"
+
+    # volumes: []
+    # environment: {}
+
+  # telegraf: {}
+  # prometheus: {}
+...

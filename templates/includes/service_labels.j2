@@ -1,0 +1,24 @@
+{# includes/service_labels.j2 #}
+{% if svc.labels is defined %}
+    labels:
+{# --- BEGIN: TRAEFIK-SPECIFIC LABELS --- #}
+{% if svc.labels.traefik is defined and svc.labels.traefik.enabled and svc.labels.traefik.pattern == "default" %}
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{ stack.name }}-http.rule=Host(`{{ stack.name }}.{{ stack.domain }}`)"
+      - "traefik.http.routers.{{ stack.name }}-http.entrypoints=http"
+      - "traefik.http.middlewares.{{ stack.name }}-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.{{ stack.name }}-http.middlewares={{ stack.name }}-https-redirect"
+      - "traefik.http.routers.{{ stack.name }}-https.rule=Host(`{{ stack.name }}.{{ stack.domain }}`)"
+      - "traefik.http.routers.{{ stack.name }}-https.entrypoints=https"
+      - "traefik.http.routers.{{ stack.name }}-https.tls=true"
+{% endif %}
+{# --- END:   TRAEFIK-SPECIFIC LABELS --- #}
+{# --- BEGIN: RAW LABELS --- #}
+{% if svc.labels.raw is defined and svc.labels.raw | length > 0 %}
+{% for label_raw in svc.labels.raw %}
+      - "{{ label_raw }}"
+{% endfor %}
+{% endif %}
+{# --- END:   RAW LABELS --- #}
+{% endif %}
+{# end #}

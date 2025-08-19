@@ -1,0 +1,26 @@
+---
+# defaults file for ansible-role-compose-stack
+stack:
+  name: ""  # demo value: "nginx-demo"
+  state: "present"
+  domain: ""  # demo value: "example.lan"
+
+  base_dir: "/opt/apps"
+  src_file: "{{ stack.name }}/compose.yml.j2"
+  dst_dir: "{{ stack.base_dir }}/{{ stack.name }}"
+
+  file:
+    owner: "root"
+    mode: "0644"
+
+  dir:
+    mode: "0755"
+
+  networks:
+    - { name: "{{ stack.name }}", driver: bridge }
+
+  destroy:
+    remove_volumes: true
+    remove_images: "local"  # (all|local)
+    remove_networks: true
+...

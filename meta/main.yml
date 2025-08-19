@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  role_name: compose_stack
+  namespace: cloudnonsense
+  company: cloudnonsense
+  author: cloudnonsense
+  description: Deploy docker compose stacks.
+  license: "license (BSD, MIT)"
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - docker-compose
+
+dependencies: []
+...

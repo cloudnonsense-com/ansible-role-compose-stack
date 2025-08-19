@@ -1,0 +1,9 @@
+{# includes/networks.j2 #}
+{% if stack.networks is defined and stack.networks | length > 0 %}
+networks:
+{% for network in stack.networks %}
+  "{{ network.name }}":
+    external: true
+{% endfor %}
+{% endif %}
+{# end #}

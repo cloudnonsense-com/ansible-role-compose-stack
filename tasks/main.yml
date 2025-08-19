@@ -1,0 +1,12 @@
+---
+
+- ansible.builtin.include_vars:
+    file: "{{ role_path }}/defaults/{{ stack.name }}.yml"
+
+- include_tasks: create.yml
+  when: stack.state == "present"
+
+- include_tasks: destroy.yml
+  when: stack.state == "absent"
+
+...

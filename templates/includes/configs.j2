@@ -1,0 +1,10 @@
+{# includes/configs.j2 #}
+{% if svc.configs is defined and svc.configs | length > 0 %}
+configs:
+{% for config in svc.configs %}
+  "{{ config.source }}":
+    content: |
+      {{ lookup('template', role_path ~ '/templates/' ~ stack.name ~ '/' ~ config.source ~ '.j2') | indent(6) }}
+{% endfor %}
+{% endif %}
+{# end #}
