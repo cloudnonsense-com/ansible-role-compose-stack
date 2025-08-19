@@ -3,4 +3,4 @@
 app_name: hello_world
 apps_dir: "/opt/apps"
 app_dir: "/opt/apps/{{ app_name }}"
-compose_file: "compose.yml"
+compose_file: "files/compose.yml"
