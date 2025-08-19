@@ -1,0 +1,6 @@
+---
+# defaults file for ansible-role-compose-stack
+app_name: hello_world
+apps_dir: "/opt/apps"
+app_dir: "/opt/apps/{{ app_name }}"
+compose_file: "compose.yml"
