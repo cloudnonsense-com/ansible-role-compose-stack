@@ -1,18 +1,43 @@
 ---
 # tasks file for ansible-role-compose-stack
-- name: compose_stack ({{app}}) | ensure dir exists
-  file:
+- name: compose_stack ({{app}}) | create app dir
+  ansible.builtin.file:
     path: "{{ app_dst_dir }}"
     state: directory
     mode: '0755'
+  when:
+    - app_state == "present"
 
 - name: compose_stack ({{app}}) | copy compose.yml 
-  template:
+  ansible.builtin.template:
     src: "{{ compose_src_file }}"
     dest: "{{ app_dst_dir }}/compose.yml"
     mode: '0644'
+  when:
+    - app_state == "present"
+
+- name: compose_stack ({{app}}) | sync app data"
+  ansible.posix.synchronize:
+    src:  "{{ src_app_data }}"
+    dest: "{{ dst_app_data }}"
+  when:
+    - app_state == "present"
+    - app_copy_data
+  no_log: "{{ app_no_log }}"
+
+- name: compose_stack ({{app}}) | set permissions"
+  ansible.builtin.file:
+    path: "{{ app_dst_dir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ app_file_owner }}"
+    group: "{{ app_file_owner }}"
+  when:
+    - app_state == "present"
 
 - name: compose_stack ({{app}}) | start compose stack
   community.docker.docker_compose_v2:
     project_src: "{{ app_dst_dir }}"
     state: present
+  when:
+    - app_state == "present"
