@@ -1,7 +1,7 @@
 ---
 # defaults file for ansible-role-compose-stack
-app: hello_world
+app: nginx-demo
 apps_dst_dir: "/opt/apps"
 app_dst_dir: "{{ apps_dst_dir }}/{{ app }}"
 
-compose_src_file: "{{ 'files/compose.yml' if app == 'hello_world' else 'apps/' ~ app ~ '/compose.yml' }}"
+compose_src_file: "{{ 'files/compose.yml' if app == 'nginx-demo' else 'apps/' ~ app ~ '/compose.yml' }}"

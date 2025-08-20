@@ -1,4 +1,7 @@
 services:
-  hello-world:
-    image: hello-world:latest
-    restart: always
+  nginx-demo:
+    container_name: nginx-demo
+    image: ubuntu/nginx:latest
+    ports:
+      - "37080:80"
+    restart: unless-stopped
