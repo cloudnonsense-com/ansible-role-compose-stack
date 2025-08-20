@@ -16,24 +16,35 @@
   when:
     - app_state == "present"
 
-- name: compose_stack ({{app}}) | sync app data"
-  ansible.posix.synchronize:
-    src:  "{{ src_app_data }}"
-    dest: "{{ dst_app_data }}"
+# - name: compose_stack ({{app}}) | sync app data"
+#   ansible.posix.synchronize:
+#     src:  "{{ src_app_data }}"
+#     dest: "{{ dst_app_data }}"
+#   when:
+#     - app_state == "present"
+#     - app_copy_data
+#   no_log: "{{ app_no_log }}"
+
+# - name: compose_stack ({{app}}) | set permissions"
+#   ansible.builtin.file:
+#     path: "{{ app_dst_dir }}"
+#     state: directory
+#     recurse: yes
+#     owner: "{{ app_file_owner }}"
+#     group: "{{ app_file_owner }}"
+#   when:
+#     - app_state == "present"
+
+- name: compose_stack ({{app}}) | copy app data"
+  ansible.builtin.copy:
+    src: "{{ src_app_data }}/"
+    dest: "{{ dst_app_data }}/"
+    owner: "{{ app_file_owner }}"
+    group: "{{ app_file_owner }}"
+    mode: '0644'
   when:
     - app_state == "present"
     - app_copy_data
-  no_log: "{{ app_no_log }}"
-
-- name: compose_stack ({{app}}) | set permissions"
-  ansible.builtin.file:
-    path: "{{ app_dst_dir }}"
-    state: directory
-    recurse: yes
-    owner: "{{ app_file_owner }}"
-    group: "{{ app_file_owner }}"
-  when:
-    - app_state == "present"
 
 - name: compose_stack ({{app}}) | start compose stack
   community.docker.docker_compose_v2:
