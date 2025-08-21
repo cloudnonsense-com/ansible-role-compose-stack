@@ -1,52 +1,52 @@
 ---
 # tasks file for ansible-role-compose-stack
-- name: compose_stack ({{app}}) | create app dir
+- name: compose_stack ({{ compose_stack_name }}) | create app dir
   ansible.builtin.file:
-    path: "{{ app_dst_dir }}"
+    path: "{{ compose_stack_dst_dir }}"
     state: directory
     mode: '0755'
   when:
-    - app_state == "present"
+    - compose_stack_state == "present"
 
-- name: compose_stack ({{app}}) | render compose.yml 
+- name: compose_stack ({{ compose_stack_name }}) | render compose.yml 
   ansible.builtin.template:
-    src: "{{ compose_src_file }}"
-    dest: "{{ app_dst_dir }}/compose.yml"
+    src: "{{ compose_stack_src_file }}"
+    dest: "{{ compose_stack_dst_dir }}/compose.yml"
     mode: '0644'
   when:
-    - app_state == "present"
+    - compose_stack_state == "present"
   notify: restart compose stack
 
-- name: compose_stack ({{app}}) | copy app data"
+- name: compose_stack ({{ compose_stack_name }}) | copy app data"
   ansible.builtin.copy:
-    src: "{{ src_app_data }}/"
-    dest: "{{ dst_app_data }}/"
-    owner: "{{ app_file_owner }}"
-    group: "{{ app_file_owner }}"
+    src: "{{ compose_stack_src_data }}/"
+    dest: "{{ compose_stack_dst_data }}/"
+    owner: "{{ compose_stack_file_owner }}"
+    group: "{{ compose_stack_file_owner }}"
     mode: '0644'
     directory_mode: '0744'
   when:
-    - app_state == "present"
-    - app_copy_data
+    - compose_stack_state == "present"
+    - compose_stack_copy_data
   notify: restart compose stack
 
-- name: compose_stack ({{app}}) | start compose stack
+- name: compose_stack ({{ compose_stack_name }}) | start compose stack
   community.docker.docker_compose_v2:
-    project_src: "{{ app_dst_dir }}"
+    project_src: "{{ compose_stack_dst_dir }}"
     state: present
   when:
-    - app_state == "present"
+    - compose_stack_state == "present"
 
-- name: compose_stack ({{ app }}) | stop and remove compose stack
+- name: compose_stack ({{ compose_stack_name }}) | stop and remove compose stack
   community.docker.docker_compose_v2:
-    project_src: "{{ app_dst_dir }}"
+    project_src: "{{ compose_stack_dst_dir }}"
     state: absent
   when: 
-    - app_state == "absent"
-    - app_dst_dir is directory
+    - compose_stack_state == "absent"
+    - compose_stack_dst_dir is directory
 
-- name: compose_stack ({{ app }}) | remove app directory
+- name: compose_stack ({{ compose_stack_name }}) | remove app directory
   ansible.builtin.file:
-    path: "{{ app_dst_dir }}"
+    path: "{{ compose_stack_dst_dir }}"
     state: absent
-  when: app_state == "absent"
+  when: compose_stack_state == "absent"
