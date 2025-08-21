@@ -7,6 +7,7 @@ app_state: "present"
 # app_debug: false # not used yet
 app_file_owner: root
 app_no_log: true
+app_http_host: "nginx-demo.example.lan"
 
 # compiled vars (maybe move these to vars/main.yml)
 compose_src_file: "{{ 'templates/compose.yml.j2' if app == 'nginx-demo' else 'apps/' ~ app ~ '/compose.yml.j2' }}"

@@ -5,3 +5,5 @@ services:
     ports:
       - "37080:80"
     restart: unless-stopped
+    volumes:
+      - "{{ dst_app_data }}/index.html:/usr/share/nginx/html/index.html:ro"
