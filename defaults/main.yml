@@ -9,7 +9,7 @@ app_file_owner: root
 app_no_log: true
 
 # compiled vars (maybe move these to vars/main.yml)
-compose_src_file: "{{ 'files/compose.yml' if app == 'nginx-demo' else 'apps/' ~ app ~ '/compose.yml' }}"
+compose_src_file: "{{ 'templates/compose.yml.j2' if app == 'nginx-demo' else 'apps/' ~ app ~ '/compose.yml.j2' }}"
 
 app_dst_dir: "{{ apps_dst_dir }}/{{ app }}"
 
