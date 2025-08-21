@@ -43,7 +43,7 @@
     state: absent
   when: 
     - app_state == "absent"
-    - app_dir_stat.stat.exists
+    - app_dst_dir.stat.exists
 
 - name: compose_stack ({{ app }}) | remove app directory
   ansible.builtin.file:
