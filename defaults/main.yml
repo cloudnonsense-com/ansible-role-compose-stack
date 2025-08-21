@@ -4,6 +4,7 @@ app: "nginx-demo"
 apps_dst_dir: "/opt/apps"
 app_copy_data: true
 app_state: "present"
+# app_keep_files_on_destroy: true|false # future improvement
 # app_debug: false # not used yet
 app_file_owner: root
 app_no_log: true
