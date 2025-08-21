@@ -3,6 +3,5 @@
 - name: restart compose stack
   community.docker.docker_compose_v2:
     project_src: "{{ app_dst_dir }}"
-    state: present
-    restarted: true
+    state: restarted
 ...
