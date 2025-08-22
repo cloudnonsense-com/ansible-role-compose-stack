@@ -1,6 +1,6 @@
 ---
 # defaults file for ansible-role-compose-stack
-compose_stack_name: "nginx-demo"
+compose_stack_name: "nginx-demo"        # compose_stack_name: "nginx-demo"
 compose_stacks_base_dir: "/opt/apps"
 compose_stack_copy_data: true
 compose_stack_state: "present"
