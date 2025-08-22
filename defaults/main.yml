@@ -13,8 +13,7 @@ compose_stack_http_host: "nginx-demo.example.lan"
 
 # compiled vars (maybe move these to vars/main.yml)
 compose_stack_src_file: "{{ 'templates/compose.yml.j2' if compose_stack_name == 'nginx-demo' else 'apps/' ~ compose_stack_name ~ '/compose.yml.j2' }}"
-
-compose_stack_dst_dir: "{{ compose_stacks_base_dir }}/{{ compose_stack_name }}"
-
-compose_stack_src_data: "{{ 'files/data'        if compose_stack_name == 'nginx-demo' else 'apps/' ~ compose_stack_name ~ '/data' }}"
+compose_stack_src_data: "{{ 'files/data'               if compose_stack_name == 'nginx-demo' else 'apps/' ~ compose_stack_name ~ '/data'           }}"
+compose_stack_dst_dir:  "{{ compose_stacks_base_dir }}/{{ compose_stack_name }}"
 compose_stack_dst_data: "{{ compose_stack_dst_dir }}/data"
+...
