@@ -17,19 +17,6 @@
     - compose_stack_state == "present"
   notify: restart compose stack
 
-# - name: compose_stack ({{ compose_stack_name }}) | copy app data"
-#   ansible.builtin.copy:
-#     src: "{{ compose_stack_src_data }}/"
-#     dest: "{{ compose_stack_dst_data }}/"
-#     owner: "{{ compose_stack_file_owner }}"
-#     group: "{{ compose_stack_file_owner }}"
-#     mode: "{{ compose_stack_file_mode }}"
-#     directory_mode: "{{ compose_stack_dir_mode }}"
-#   when:
-#     - compose_stack_state == "present"
-#     - compose_stack_copy_data
-#   notify: restart compose stack
-
 - name: compose_stack ({{ compose_stack_name }}) | start compose stack
   community.docker.docker_compose_v2:
     project_src: "{{ compose_stack_dst_dir }}"
@@ -58,3 +45,4 @@
     path: "{{ compose_stack_dst_dir }}"
     state: absent
   when: compose_stack_state == "absent"
+...
