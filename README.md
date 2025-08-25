@@ -1,38 +1,82 @@
-Role Name
-=========
+# Ansible Role: compose-stack
 
-A brief description of the role goes here.
+This Ansible role manages Docker Compose v2 stacks.  
+It allows you to deploy, restart, and remove application stacks in a consistent and idempotent way using a simple set of variables.
 
-Requirements
-------------
+---
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+## Features
 
-Role Variables
---------------
+- Creates an application directory for each stack.
+- Renders a `compose.yml` file from a Jinja2 template.
+- Starts and manages the lifecycle of a Docker Compose v2 project.
+- Supports stopping and removing stacks cleanly.
+- Includes Molecule tests for validation.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+---
 
-Dependencies
-------------
+## Requirements
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+- **Ansible** ≥ 2.12  
+- **Docker Engine** running on the target host.  
+- **Docker Compose v2 plugin** installed.  
+- Python libraries: `docker` and `docker-compose` (usually bundled with `community.docker`).  
 
-Example Playbook
-----------------
+---
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Role Variables
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+Default variables are defined in [`defaults/main.yml`](defaults/main.yml):
 
-License
--------
+```yaml
+compose_stacks_base_dir:  "/opt/apps"
+compose_stack_state:      "present"
+compose_stack_file_owner: "root"
+compose_stack_file_mode:  "0644"
+compose_stack_dir_mode:   "0755"
 
-BSD
+compose_stack_name:       ""    # demo value: "nginx-demo"
+compose_stack_http_host:  ""    # demo value: "nginx-demo.example.lan"
 
-Author Information
-------------------
+compose_stack_src_file: "apps/{{ compose_stack_name }}/compose.yml.j2"
+compose_stack_dst_dir:  "{{ compose_stacks_base_dir }}/{{ compose_stack_name }}"
+```
+============================================================================================================
+## Key Variables
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+`compose_stack_name`
+  * Name of the application stack. Used in directory paths and as a reference.
+  * Example: nginx-demo
+
+`compose_stack_state`
+  * Desired state of the stack:
+  * `present` → deploy or update the stack
+  * `absent` → remove the stack
+
+`compose_stack_src_file`
+  * Path to the Jinja2 template that will render into `compose.yml`.
+
+`compose_stack_dst_dir`
+  * Destination directory for the stack. Defaults to `{{ compose_stacks_base_dir }}/{{ compose_stack_name }}`.
+
+## Handlers
+The role includes the following handler:
+  * `restart compose stack` 
+  * Restarts the stack using community.docker.docker_compose_v2.
+
+## Example Usage
+### Playbook
+```yaml
+- hosts: docker_hosts
+  roles:
+    - role: ansible-role-compose-stack
+      vars:
+        compose_stack_name: "nginx-demo"
+        compose_stack_http_host: "nginx-demo.example.lan"
+```
+
+## License
+MIT
+
+## Author
+compose-stack role by [CloudNonsense.com]
