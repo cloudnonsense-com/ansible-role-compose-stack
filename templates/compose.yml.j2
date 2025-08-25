@@ -9,6 +9,9 @@ services:
     configs:
       - source: index.nginx-debian.html
         target: /var/www/html/index.nginx-debian.html
+        uid: "33"
+        gid: "33"
+        mode: 0644
 
 configs:
   index.nginx-debian.html:
