@@ -1,0 +1,34 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: False
+  roles:
+
+  tasks:
+    - name: Check nginx HTTP response
+      ansible.builtin.uri:
+        url: "http://host.docker.internal:37080"
+        return_content: true
+      register: nginx_response
+
+    - name: Debug nginx response
+      ansible.builtin.debug:
+        var: nginx_response.content
+
+    - name: Verify nginx status code
+      ansible.builtin.assert:
+        that:
+          - nginx_response.status == 200
+        fail_msg: "Nginx did not return HTTP 200 OK"
+        success_msg: "Nginx returned HTTP 200 OK"
+
+    - name: Verify nginx content
+      ansible.builtin.assert:
+        that:
+          # - '"ansible role" in nginx_response.content'
+          - nginx_response.content is search('deployed by the.*compose-stack.*ansible role')
+        fail_msg: "Nginx content verification failed! Expected string not found."
+        success_msg: "Nginx is serving the expected content."
+
+...

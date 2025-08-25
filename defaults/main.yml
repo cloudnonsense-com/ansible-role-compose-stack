@@ -1,18 +1,18 @@
 ---
 # defaults file for ansible-role-compose-stack
-compose_stack_name:       "nginx-demo"        # demo value: "nginx-demo"
 compose_stacks_base_dir:  "/opt/apps"
-compose_stack_copy_data:  true                # demo value: true
 compose_stack_state:      "present"
-# compose_stack_keep_files_on_destroy: true|false # future improvement
-# future debug features
-# compose_stack_debug: false # not used yet
-# compose_stack_no_log: true # not used yet
-compose_stack_file_owner: root
-compose_stack_http_host: "nginx-demo.example.lan"
+compose_stack_file_owner: "root"
+compose_stack_file_mode:  "0644"
+compose_stack_dir_mode:   "0755"
 
-compose_stack_src_file: "apps/{{ compose_stack_name }}/compose.yml.j2"  # demo value: templates/compose.yml.j2
-compose_stack_src_data: "apps/{{ compose_stack_name }}/data"            # demo value: files/data
+compose_stack_name:       ""    # demo value: "nginx-demo"
+compose_stack_copy_data:  false # demo value: true
+compose_stack_http_host:  ""    # demo value: "nginx-demo.example.lan"
+
+compose_stack_src_file: "apps/{{ compose_stack_name }}/compose.yml.j2" # demo value: templates/compose.yml.j2
+compose_stack_src_data: "apps/{{ compose_stack_name }}/data"           # demo value: files/data
+
 compose_stack_dst_dir:  "{{ compose_stacks_base_dir }}/{{ compose_stack_name }}"
 compose_stack_dst_data: "{{ compose_stack_dst_dir }}/data"
 ...

@@ -1,0 +1,14 @@
+---
+
+- name: Cleanup
+  hosts: all
+  gather_facts: True
+  roles:
+
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_name: "nginx-demo"
+        compose_stack_state: "absent"
+        compose_stack_src_file: templates/compose.yml.j2
+
+...

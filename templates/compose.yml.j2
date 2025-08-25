@@ -5,5 +5,23 @@ services:
     ports:
       - "37080:80"
     restart: unless-stopped
-    volumes:
-      - "{{ compose_stack_dst_data }}/index.html:/var/www/html/index.nginx-debian.html:ro"
+
+    configs:
+      - source: index.nginx-debian.html
+        target: /var/www/html/index.nginx-debian.html
+
+configs:
+  index.nginx-debian.html:
+    content: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>nginx-demo</title>
+      </head>
+      <body>
+        <h1>This is the default index.html page</h1>
+        <p>Served by the <strong>nginx-demo</strong> container,<br>
+        deployed by the <em>"compose-stack"</em> ansible role.</p>
+      </body>
+      </html>
