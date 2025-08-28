@@ -1,10 +1,10 @@
 ---
-# - name: create compose stack
-- import_tasks: create.yml
+- name: include create compose stack
+  include_tasks: create.yml
   when: compose_stack_state == "present"
 
-# - name: destroy compose stack
-- import_tasks: destroy.yml
+- name: include destroy compose stack
+  include_tasks: destroy.yml
   when: compose_stack_state == "absent"
 
 # tasks file for ansible-role-compose-stack
