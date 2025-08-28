@@ -1,56 +1,9 @@
 ---
-- name: include create compose stack
-  include_tasks: create.yml
+
+- include_tasks: create.yml
   when: compose_stack_state == "present"
 
-- name: include destroy compose stack
-  include_tasks: destroy.yml
+- include_tasks: destroy.yml
   when: compose_stack_state == "absent"
 
-# tasks file for ansible-role-compose-stack
-# - name: compose_stack ({{ compose_stack_name }}) | create app dir
-#   ansible.builtin.file:
-#     path: "{{ compose_stack_dst_dir }}"
-#     state: directory
-#     mode: "{{ compose_stack_dir_mode }}"
-#   when:
-#     - compose_stack_state == "present"
-
-# - name: compose_stack ({{ compose_stack_name }}) | render compose.yml 
-#   ansible.builtin.template:
-#     src: "{{ compose_stack_src_file }}"
-#     dest: "{{ compose_stack_dst_dir }}/compose.yml"
-#     mode: "{{ compose_stack_file_mode }}"
-#   when:
-#     - compose_stack_state == "present"
-#   notify: restart compose stack
-
-# - name: compose_stack ({{ compose_stack_name }}) | start compose stack
-#   community.docker.docker_compose_v2:
-#     project_src: "{{ compose_stack_dst_dir }}"
-#     state: present
-#   when:
-#     - compose_stack_state == "present"
-
-# # below tasks are for destroying the stack:
-# - name: compose_stack ({{ compose_stack_name }}) | check if app dir exists
-#   ansible.builtin.stat:
-#     path: "{{ compose_stack_dst_dir }}"
-#   when: compose_stack_state == "absent"
-#   register: compose_stack_dst_dir_stat
-
-# - name: compose_stack ({{ compose_stack_name }}) | stop and remove compose stack
-#   community.docker.docker_compose_v2:
-#     project_src: "{{ compose_stack_dst_dir }}"
-#     state: absent
-#   when: 
-#     - compose_stack_state == "absent"
-#     - compose_stack_dst_dir_stat.stat.isdir is defined
-#     - compose_stack_dst_dir_stat.stat.isdir
-
-# - name: compose_stack ({{ compose_stack_name }}) | remove app directory
-#   ansible.builtin.file:
-#     path: "{{ compose_stack_dst_dir }}"
-#     state: absent
-#   when: compose_stack_state == "absent"
 ...
