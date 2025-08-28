@@ -1,0 +1,21 @@
+---
+# destroy.yml
+- name: "compose_stack ({{ compose_stack_name }}) | check if app dir exists"
+  ansible.builtin.stat:
+    path: "{{ compose_stack_dst_dir }}"
+  register: compose_stack_dst_dir_stat
+
+- name: "compose_stack ({{ compose_stack_name }}) | stop and remove compose stack"
+  community.docker.docker_compose_v2:
+    project_src: "{{ compose_stack_dst_dir }}"
+    state:       "absent"
+  when: 
+    - compose_stack_dst_dir_stat.stat.isdir is defined
+    - compose_stack_dst_dir_stat.stat.isdir
+
+- name: "compose_stack ({{ compose_stack_name }}) | remove app directory"
+  ansible.builtin.file:
+    path:  "{{ compose_stack_dst_dir }}"
+    state: "absent"
+
+...
