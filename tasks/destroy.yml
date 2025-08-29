@@ -9,6 +9,7 @@
   community.docker.docker_compose_v2:
     project_src:    "{{ compose_stack_dst_dir }}"
     state:          "absent"
+    remove_images:  "{{ compose_stack_remove_images_on_destroy }}"
     remove_volumes: "{{ compose_stack_remove_volumes_on_destroy }}"
   when: 
     - compose_stack_dst_dir_stat.stat.isdir is defined

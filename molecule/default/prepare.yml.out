@@ -1,5 +1,11 @@
 ---
 
+# Playbook not used anymore.
+# It's kept here for reference only.
+# The prep tasks are now part of the
+# molecule container build in 
+# the Dockerfile.
+
 - name: Prepare
   hosts: all
   gather_facts: True
