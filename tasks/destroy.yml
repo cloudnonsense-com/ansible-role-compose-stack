@@ -7,8 +7,9 @@
 
 - name: "compose_stack ({{ compose_stack_name }}) | stop and remove compose stack"
   community.docker.docker_compose_v2:
-    project_src: "{{ compose_stack_dst_dir }}"
-    state:       "absent"
+    project_src:    "{{ compose_stack_dst_dir }}"
+    state:          "absent"
+    remove_volumes: "{{ compose_stack_remove_volumes_on_destroy }}"
   when: 
     - compose_stack_dst_dir_stat.stat.isdir is defined
     - compose_stack_dst_dir_stat.stat.isdir
