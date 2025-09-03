@@ -27,6 +27,6 @@
   loop: "{{ compose_stack_networks }}"
   when: 
     - compose_stack_manage_networks
-    - not compose_stack_skip_delete_networks_on_destroy
+    - compose_stack_remove_networks_on_destroy
 
 ...

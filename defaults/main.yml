@@ -18,5 +18,5 @@ compose_stack_remove_images_on_destroy:  "local" # (all - removes the images|loc
 compose_stack_manage_networks: true
 compose_stack_networks:
   - { name: cnns_demo, driver: bridge }
-compose_stack_skip_delete_networks_on_destroy: false
+compose_stack_remove_networks_on_destroy: true
 ...
