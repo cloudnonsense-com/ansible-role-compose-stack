@@ -20,4 +20,13 @@
     path:  "{{ compose_stack_dst_dir }}"
     state: "absent"
 
+- name: "compose_stack ({{ compose_stack_name }}) | remove networks"
+  community.docker.docker_network:
+    name: "{{ item.name }}"
+    state: absent
+  loop: "{{ compose_stack_networks }}"
+  when: 
+    - compose_stack_manage_networks
+    - not compose_stack_skip_delete_networks_on_destroy
+
 ...

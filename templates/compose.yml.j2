@@ -5,15 +5,20 @@ services:
     ports:
       - "37080:80"
     restart: unless-stopped
-
     configs:
       - source: index.nginx-debian.html
         target: /var/www/html/index.nginx-debian.html
         uid: "33"
         gid: "33"
         mode: 0644
+    networks:
+      - cnns_demo
 
 configs:
   index.nginx-debian.html:
     content: |
       {{ lookup('template', 'index.nginx-debian.html.j2') | indent(6) }}
+
+networks:
+  cnns_demo:
+    external: true

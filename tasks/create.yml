@@ -1,5 +1,13 @@
 ---
 # create.yml
+- name: "compose_stack ({{ compose_stack_name }}) | create networks"
+  community.docker.docker_network:
+    name: "{{ item.name }}"
+    driver: "{{ item.driver | default('bridge') }}"
+    state: present
+  loop: "{{ compose_stack_networks }}"
+  when: compose_stack_manage_networks
+
 - name: "compose_stack ({{ compose_stack_name }}) | create app dir"
   ansible.builtin.file:
     path:  "{{ compose_stack_dst_dir }}"
