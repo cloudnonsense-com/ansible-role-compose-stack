@@ -8,6 +8,6 @@
     - role: cloudnonsense.compose_stack
       vars:
         compose_stack_name: "nginx-demo"
-        compose_stack_src_file: templates/compose.yml.j2
+        compose_stack_src_file: nginx-demo.compose.yml.j2
 
 ...
