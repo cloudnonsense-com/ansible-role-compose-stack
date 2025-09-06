@@ -1,5 +1,9 @@
 ---
 
+# - ansible.builtin.include_vars:
+#     file: "{{ compose_stack_name }}.yaml"
+#     name: compose_stack_var
+
 - include_tasks: create.yml
   when: compose_stack_state == "present"
 

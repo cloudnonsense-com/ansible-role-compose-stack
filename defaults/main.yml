@@ -9,8 +9,7 @@ compose_stack_dir_mode:   "0755"
 compose_stack_name:       ""    # demo value: "nginx-demo"
 compose_stack_http_host:  ""    # demo value: "nginx-demo.example.lan"
 
-# compose_stack_src_file: "apps/{{ compose_stack_name }}/compose.yml.j2" # demo value: templates/compose.yml.j2
-compose_stack_src_file: ""
+compose_stack_src_file: "{{ compose_stack_name }}/compose.yml.j2"
 compose_stack_dst_dir:  "{{ compose_stacks_base_dir }}/{{ compose_stack_name }}"
 
 compose_stack_remove_volumes_on_destroy: true

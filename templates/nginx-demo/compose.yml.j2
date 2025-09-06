@@ -17,7 +17,7 @@ services:
 configs:
   index.nginx-debian.html:
     content: |
-      {{ lookup('template', 'index.nginx-debian.html.j2') | indent(6) }}
+      {{ lookup('template', role_path ~ '/templates/' ~ compose_stack_name ~ '/index.nginx-debian.html.j2') | indent(6) }}
 
 networks:
   cnns_demo:
