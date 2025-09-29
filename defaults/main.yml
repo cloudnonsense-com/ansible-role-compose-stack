@@ -1,23 +1,26 @@
 ---
 # defaults file for ansible-role-compose-stack
-compose_stacks_base_dir:  "/opt/apps"
-compose_stack_state:      "present"
-compose_stack_file_owner: "root"
-compose_stack_file_mode:  "0644"
-compose_stack_dir_mode:   "0755"
+stack:
+  name: ""  # demo value: "nginx-demo"
+  state: "present"
+  domain: ""  # demo value: "example.lan"
 
-compose_stack_name:       ""    # demo value: "nginx-demo"
+  base_dir: "/opt/apps"
+  src_file: "{{ stack.name }}/compose.yml.j2"
+  dst_dir: "{{ stack.base_dir }}/{{ stack.name }}"
 
-compose_stack_src_file: "{{ compose_stack_name }}/compose.yml.j2"
-compose_stack_dst_dir:  "{{ compose_stacks_base_dir }}/{{ compose_stack_name }}"
+  file:
+    owner: "root"
+    mode: "0644"
 
-compose_stack_remove_volumes_on_destroy: true
-compose_stack_remove_images_on_destroy:  "local" # (all - removes the images|local)
+  dir:
+    mode: "0755"
 
-compose_stack_manage_networks: true
-compose_stack_networks:
-  - { name: "{{ compose_stack_name }}", driver: bridge }
-compose_stack_remove_networks_on_destroy: true
+  networks:
+    - { name: "{{ stack.name }}", driver: bridge }
 
-compose_stack_domain: "" # demo value: "example.lan"
+  destroy:
+    remove_volumes: true
+    remove_images: "local"  # (all|local)
+    remove_networks: true
 ...

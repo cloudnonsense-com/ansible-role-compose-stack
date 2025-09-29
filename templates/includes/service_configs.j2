@@ -1,7 +1,7 @@
 {# includes/service_configs.j2 #}
-{% if manage_configs %}
+{% if svc.configs is defined and svc.configs | length > 0 %}
     configs:
-{% for config in configs %}
+{% for config in svc.configs %}
       - source: "{{ config.source }}"
         target: "{{ config.target }}"
         uid: "{{ config.uid }}"

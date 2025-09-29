@@ -1,25 +1,23 @@
 ---
 ### NGINX-DEMO ###
-compose_stack_nginxdemo_image: "ubuntu/nginx:latest"
-compose_stack_nginxdemo_restart: "unless-stopped"
+services:
+  nginxdemo:
+    image: "ubuntu/nginx:latest"
+    restart: "unless-stopped"
 
-compose_stack_nginxdemo_manage_ports: true
-compose_stack_nginxdemo_ports:
-  - "37080:80"
+    ports:
+      - "37080:80"
 
-compose_stack_nginxdemo_manage_labels: true
-compose_stack_nginxdemo_labels_traefik_enable: true
-compose_stack_nginxdemo_labels_traefik_pattern: "default"
-compose_stack_nginxdemo_labels_raw_enable: false
-compose_stack_nginxdemo_labels_raw: ""
+    labels:
+      traefik:
+        enabled: true
+        pattern: "default"
+      raw: []
 
-compose_stack_nginxdemo_manage_configs: true
-compose_stack_nginxdemo_configs:
-  - source: "index.nginx-debian.html"
-    target: "/var/www/html/index.nginx-debian.html"
-    uid: "33"
-    gid: "33"
-    mode: "0644" # must use quotes!!!
-
-# if a global list is required, you can join two lists (i.e. lets say you have networks for container 1 and another set of networks for container 2 , you can join them so you can build the global networks statement.)
+    configs:
+      - source: "index.nginx-debian.html"
+        target: "/var/www/html/index.nginx-debian.html"
+        uid: "33"
+        gid: "33"
+        mode: "0644"
 ...

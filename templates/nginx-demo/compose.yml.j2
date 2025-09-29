@@ -1,41 +1,16 @@
 {# --- NGINX-DEMO ---#}
 ---
+{% set svc = services.nginxdemo %}
 services:
 
-  "{{ compose_stack_name }}":
-{% with 
-  container_name=compose_stack_name,
-  image=compose_stack_nginxdemo_image,
-  restart=compose_stack_nginxdemo_restart,
-  manage_ports=compose_stack_nginxdemo_manage_ports,
-  ports=compose_stack_nginxdemo_ports,
-
-  manage_labels=compose_stack_nginxdemo_manage_labels,
-  labels_traefik_enable=compose_stack_nginxdemo_labels_traefik_enable,
-  labels_traefik_pattern=compose_stack_nginxdemo_labels_traefik_pattern,
-  labels_raw=compose_stack_nginxdemo_labels_raw,
-  labels_raw_enable=compose_stack_nginxdemo_labels_raw_enable,
-
-  manage_networks=compose_stack_manage_networks,
-  networks=compose_stack_networks,
-  manage_configs=compose_stack_nginxdemo_manage_configs,
-  configs=compose_stack_nginxdemo_configs
-%}
+  "{{ stack.name }}":
 {% include "includes/service_common.j2" %}
 {% include "includes/service_logging.j2" %}
 {% include "includes/service_ports.j2" %}
 {% include "includes/service_labels.j2" %}
 {% include "includes/service_networks.j2" %}
 {% include "includes/service_configs.j2" %}
-{% endwith %}
 
-{% with 
-  manage_networks=compose_stack_manage_networks,
-  networks=compose_stack_networks,
-  manage_configs=compose_stack_nginxdemo_manage_configs,
-  configs=compose_stack_nginxdemo_configs
-%}
 {% include "includes/networks.j2" %}
 {% include "includes/configs.j2" %}
-{% endwith %}
 ...

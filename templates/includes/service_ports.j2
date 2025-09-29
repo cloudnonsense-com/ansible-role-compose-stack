@@ -1,7 +1,7 @@
 {# includes/service_ports.j2 #}
-{% if manage_ports %}
+{% if svc.ports is defined and svc.ports | length > 0 %}
     ports:
-{% for port in ports %}
+{% for port in svc.ports %}
       - "{{ port }}"
 {% endfor %}
 {% endif %}

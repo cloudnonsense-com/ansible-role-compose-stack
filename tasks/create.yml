@@ -1,29 +1,29 @@
 ---
 # create.yml
-- name: "compose_stack ({{ compose_stack_name }}) | create networks"
+- name: "stack ({{ stack.name }}) | create networks"
   community.docker.docker_network:
     name: "{{ item.name }}"
     driver: "{{ item.driver | default('bridge') }}"
     state: present
-  loop: "{{ compose_stack_networks }}"
-  when: compose_stack_manage_networks
+  loop: "{{ stack.networks }}"
+  when: stack.networks is defined and stack.networks | length > 0
 
-- name: "compose_stack ({{ compose_stack_name }}) | create app dir"
+- name: "stack ({{ stack.name }}) | create app dir"
   ansible.builtin.file:
-    path:  "{{ compose_stack_dst_dir }}"
+    path:  "{{ stack.dst_dir }}"
     state: "directory"
-    mode:  "{{ compose_stack_dir_mode }}"
+    mode:  "{{ stack.dir.mode }}"
 
-- name: "compose_stack ({{ compose_stack_name }}) | render compose.yml"
+- name: "stack ({{ stack.name }}) | render compose.yml"
   ansible.builtin.template:
-    src:  "{{ compose_stack_src_file }}"
-    dest: "{{ compose_stack_dst_dir }}/compose.yml"
-    mode: "{{ compose_stack_file_mode }}"
+    src:  "{{ stack.src_file }}"
+    dest: "{{ stack.dst_dir }}/compose.yml"
+    mode: "{{ stack.file.mode }}"
   notify: restart compose stack
 
-- name: "compose_stack ({{ compose_stack_name }}) | start compose stack"
+- name: "stack ({{ stack.name }}) | start compose stack"
   community.docker.docker_compose_v2:
-    project_src: "{{ compose_stack_dst_dir }}"
+    project_src: "{{ stack.dst_dir }}"
     state:       "present"
 
 ...
