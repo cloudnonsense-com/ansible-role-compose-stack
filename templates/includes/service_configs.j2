@@ -1,0 +1,12 @@
+{# includes/service_configs.j2 #}
+{% if manage_configs %}
+    configs:
+{% for config in configs %}
+      - source: "{{ config.source }}"
+        target: "{{ config.target }}"
+        uid: "{{ config.uid }}"
+        gid: "{{ config.gid }}"
+        mode: "{{ config.mode }}"
+{% endfor %}
+{% endif %}
+{# end #}

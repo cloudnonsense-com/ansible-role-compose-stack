@@ -1,0 +1,8 @@
+{# includes/service_networks.j2 #}
+{% if manage_networks %}
+    networks:
+{% for network in networks %}
+      - "{{ network.name }}"
+{% endfor %}
+{% endif %}
+{# end #}

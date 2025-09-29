@@ -5,11 +5,16 @@
   gather_facts: True
 
   roles:
+
     - role: cloudnonsense.compose_stack
       vars:
         compose_stack_name: "nginx-demo"
         compose_stack_state: "absent"
-        # compose_stack_src_file: nginx-demo.compose.yml.j2
+
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_name: "grafana"
+        compose_stack_state: "absent"
 
   post_tasks:
     - name: Remove all unnamed (dangling) Docker volumes

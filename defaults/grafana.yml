@@ -1,0 +1,32 @@
+---
+### GRAFANA ###
+compose_stack_grafana_image: "grafana/grafana-oss:11.5.1"
+compose_stack_grafana_restart: "unless-stopped"
+compose_stack_grafana_manage_ports: true
+compose_stack_grafana_ports:
+  - "37005:3000"
+compose_stack_grafana_manage_labels: true
+compose_stack_grafana_labels_traefik_enable: true
+compose_stack_grafana_labels_traefik_pattern: "default"
+compose_stack_grafana_labels_raw_enable: false
+compose_stack_grafana_labels_raw: ""
+compose_stack_grafana_manage_configs: false
+compose_stack_grafana_configs: ""
+
+### INFLUXDB ###
+compose_stack_influxdb_image: "influxdb:1.8.3"
+compose_stack_influxdb_restart: "unless-stopped"
+compose_stack_influxdb_manage_ports: true
+compose_stack_influxdb_ports:
+  - "8086:8086"
+compose_stack_influxdb_manage_labels: false
+compose_stack_influxdb_manage_configs: false
+# volumes
+# environment
+
+### TELEGRAF ###
+
+### PROMETHEUS ###
+
+# if a global list is required, you can join two lists (i.e. lets say you have networks for container 1 and another set of networks for container 2 , you can join them so you can build the global networks statement.)
+...

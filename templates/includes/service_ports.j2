@@ -1,0 +1,8 @@
+{# includes/service_ports.j2 #}
+{% if manage_ports %}
+    ports:
+{% for port in ports %}
+      - "{{ port }}"
+{% endfor %}
+{% endif %}
+{# end #}

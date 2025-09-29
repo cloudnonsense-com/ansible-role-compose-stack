@@ -1,0 +1,10 @@
+{# includes/configs.j2 #}
+{% if manage_configs %}
+configs:
+{% for config in configs %}
+  "{{ config.source }}":
+    content: |
+      {{ lookup('template', role_path ~ '/templates/' ~ compose_stack_name ~ '/' ~ config.source ~ '.j2') | indent(6) }}
+{% endfor %}
+{% endif %}
+{# end #}
