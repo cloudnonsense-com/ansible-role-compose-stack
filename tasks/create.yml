@@ -19,7 +19,6 @@
     src:  "{{ stack.src_file }}"
     dest: "{{ stack.dst_dir }}/compose.yml"
     mode: "{{ stack.file.mode }}"
-  notify: restart compose stack
 
 - name: "stack ({{ stack.name }}) | start compose stack"
   community.docker.docker_compose_v2:

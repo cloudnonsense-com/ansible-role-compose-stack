@@ -1,7 +1,0 @@
----
-# handlers file for ansible-role-compose-stack
-- name: restart compose stack
-  community.docker.docker_compose_v2:
-    project_src: "{{ stack.dst_dir }}"
-    state: restarted
-...

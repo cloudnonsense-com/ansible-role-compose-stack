@@ -12,7 +12,7 @@ Deploy, update, and remove application stacks using Jinja2 templates and declara
 - **Network Management**: Automatically creates and manages Docker networks for each stack
 - **Validation**: Built-in variable validation with clear error messages
 - **Idempotent**: Safe to run repeatedly, only makes necessary changes
-- **Handler Support**: Automatically restarts stacks when configuration changes
+- **Automatic Updates**: Stack automatically updates when compose.yml changes
 - **Tested**: Includes comprehensive Molecule tests
 
 ---
@@ -244,16 +244,6 @@ Located in `templates/includes/`:
 
 ---
 
-## Handlers
-
-The role provides one handler:
-
-**`restart compose stack`**
-Restarts the Docker Compose stack using `community.docker.docker_compose_v2` with `state: restarted`.
-Triggered when the compose.yml template changes.
-
----
-
 ## Directory Structure
 
 When deployed, stacks create the following structure:
@@ -340,7 +330,6 @@ If a network already exists externally, either:
 - Networks are always created; external network support is planned
 - Network deletion doesn't check if other containers use the network
 - No built-in backup/restore for volumes
-- Handler may not run in expected order (runs after all tasks)
 
 ---
 
