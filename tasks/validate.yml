@@ -1,0 +1,61 @@
+---
+# validate.yml - Variable validation for compose-stack role
+
+- name: Validate stack variable is defined
+  ansible.builtin.assert:
+    that:
+      - stack is defined
+      - stack is mapping
+    fail_msg: "Required variable 'stack' is not defined or not a dictionary"
+    quiet: true
+
+- name: Validate core stack variables
+  ansible.builtin.assert:
+    that:
+      - stack.name is defined
+      - stack.name | length > 0
+      - stack.state is defined
+      - stack.state in ['present', 'absent']
+      - stack.dst_dir is defined
+      - stack.dst_dir | length > 0
+    fail_msg: "Missing or invalid core stack variables. Required: stack.name, stack.state (present|absent), stack.dst_dir"
+    quiet: true
+
+- name: Validate variables for state=present
+  ansible.builtin.assert:
+    that:
+      - stack.src_file is defined
+      - stack.file.mode is defined
+      - stack.dir.mode is defined
+    fail_msg: "When stack.state=present, required: stack.src_file, stack.file.mode, stack.dir.mode"
+    quiet: true
+  when: stack.state == "present"
+
+- name: Validate variables for state=absent
+  ansible.builtin.assert:
+    that:
+      - stack.destroy.remove_images is defined
+      - stack.destroy.remove_images in ['all', 'local']
+      - stack.destroy.remove_volumes is defined
+      - stack.destroy.remove_volumes is boolean
+      - stack.destroy.remove_networks is defined
+      - stack.destroy.remove_networks is boolean
+    fail_msg: "When stack.state=absent, required: stack.destroy.{remove_images,remove_volumes,remove_networks}"
+    quiet: true
+  when: stack.state == "absent"
+
+- name: Check template file exists
+  ansible.builtin.stat:
+    path: "{{ role_path }}/templates/{{ stack.src_file }}"
+  register: template_stat
+  delegate_to: localhost
+  when: stack.state == "present"
+
+- name: Fail if template does not exist
+  ansible.builtin.fail:
+    msg: "Template file not found: {{ role_path }}/templates/{{ stack.src_file }}"
+  when:
+    - stack.state == "present"
+    - not template_stat.stat.exists
+
+...

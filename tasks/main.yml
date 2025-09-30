@@ -1,5 +1,7 @@
 ---
 
+- include_tasks: validate.yml
+
 - ansible.builtin.include_vars:
     file: "{{ role_path }}/defaults/{{ stack.name }}.yml"
 
