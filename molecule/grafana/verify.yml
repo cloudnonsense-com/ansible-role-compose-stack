@@ -1,0 +1,64 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: False
+  roles:
+
+  tasks:
+    # Grafana tests
+    - name: Check Grafana HTTP response
+      ansible.builtin.uri:
+        url: "http://host.docker.internal:37005"
+        status_code: [200, 302]  # Grafana may redirect to login
+      register: grafana_response
+
+    - name: Verify Grafana is responding
+      ansible.builtin.assert:
+        that:
+          - grafana_response.status in [200, 302]
+        fail_msg: "Grafana did not return expected status"
+        success_msg: "Grafana is responding"
+
+    # InfluxDB tests
+    - name: Check InfluxDB HTTP response
+      ansible.builtin.uri:
+        url: "http://host.docker.internal:8086/health"
+        status_code: [200]
+      register: influxdb_response
+
+    - name: Verify InfluxDB is responding
+      ansible.builtin.assert:
+        that:
+          - influxdb_response.status == 200
+        fail_msg: "InfluxDB did not return HTTP 200"
+        success_msg: "InfluxDB is responding"
+
+    # Docker network tests
+    - name: Check grafana network exists
+      ansible.builtin.command: docker network inspect grafana
+      register: grafana_network
+      changed_when: false
+
+    - name: Verify grafana network exists
+      ansible.builtin.assert:
+        that:
+          - grafana_network.rc == 0
+        fail_msg: "grafana network does not exist"
+        success_msg: "grafana network exists"
+
+    # Docker compose stack tests
+    - name: Check grafana compose stack status
+      ansible.builtin.command: docker compose -f /opt/apps/grafana/compose.yml ps
+      register: grafana_stack
+      changed_when: false
+
+    - name: Verify grafana stack is running
+      ansible.builtin.assert:
+        that:
+          - "'grafana' in grafana_stack.stdout"
+          - "'influxdb' in grafana_stack.stdout"
+        fail_msg: "grafana stack is not running properly"
+        success_msg: "grafana stack is running"
+
+...

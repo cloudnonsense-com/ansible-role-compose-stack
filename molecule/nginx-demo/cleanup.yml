@@ -1,0 +1,35 @@
+---
+
+- name: Cleanup
+  hosts: all
+  gather_facts: True
+
+  roles:
+
+    - role: cloudnonsense.compose_stack
+      vars:
+        stack:
+          name: "nginx-demo"
+          state: "absent"
+          base_dir: "/opt/apps"
+          src_file: "nginx-demo/compose.yml.j2"
+          dst_dir: "/opt/apps/nginx-demo"
+          file:
+            owner: "root"
+            mode: "0644"
+          dir:
+            mode: "0755"
+          networks:
+            - { name: "nginx-demo", driver: bridge }
+          destroy:
+            remove_volumes: true
+            remove_images: "local"
+            remove_networks: true
+
+  post_tasks:
+    - name: Remove all unnamed (dangling) Docker volumes
+      ansible.builtin.command: docker volume prune -f
+      changed_when: "'Total reclaimed space' in prune_result.stdout"
+      register: prune_result
+
+...
