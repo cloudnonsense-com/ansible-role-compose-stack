@@ -20,7 +20,7 @@ The role follows a strict execution flow in tasks/main.yml:
 The role uses a two-layer configuration pattern:
 
 1. **Core Stack Config** (`defaults/main.yml`) - Defines individual `compose_stack_*` variables which are automatically composed into a `stack` dictionary for internal use
-2. **Per-Stack Services** (`defaults/{{ stack.name }}.yml`) - Defines the `services` dictionary with container-specific config
+2. **Per-Stack Services** (`defaults/{{ stack.name }}.yml`) - Defines the `services` dictionary with container-specific config and a `networks` list specifying which networks the stack requires (networks must be created externally)
 
 Templates in `templates/{{ stack.name }}/compose.yml.j2` reference both dictionaries and use modular includes from `templates/includes/` for reusable blocks (service_common, service_ports, service_labels, service_networks, service_configs, networks, configs, etc.).
 
@@ -38,7 +38,6 @@ Then include modular templates that reference `svc` for that service's configura
   - Template file existence check
 
 - **tasks/create.yml** - Deployment tasks:
-  - Create Docker networks (if defined)
   - Create stack directory
   - Render compose.yml from Jinja2 template
   - Start/update stack via `community.docker.docker_compose_v2`
@@ -47,7 +46,6 @@ Then include modular templates that reference `svc` for that service's configura
   - Check directory existence first
   - Stop compose stack with configurable cleanup (images/volumes)
   - Remove stack directory
-  - Remove networks (if `destroy.remove_networks: true`)
 
 ## Testing
 
@@ -94,19 +92,23 @@ molecule test -s nginx-demo & molecule test -s grafana & wait
 
 The verify.yml playbook tests:
 - HTTP responses from deployed services (nginx on :37080, grafana on :37005, influxdb on :8086)
-- Docker network creation (nginx-demo, grafana)
 - Compose stack status via `docker compose ps`
 - Service availability and expected content
+
+**Note**: Docker networks are created during the prepare phase of testing (before converge), not by the role itself.
 
 ## Development Patterns
 
 ### Adding a New Stack
 
-1. Create `defaults/{{ stack_name }}.yml` with the `services` dictionary
+1. Create `defaults/{{ stack_name }}.yml` with:
+   - `networks` list - Networks required by this stack (must be created externally)
+   - `services` dictionary - Container configurations
 2. Create `templates/{{ stack_name }}/compose.yml.j2` using standard includes
 3. Use the existing pattern: `{% set svc = services.servicename %}` then include modular templates
 4. Create new Molecule scenario directory `molecule/{{ stack_name }}/`:
-   - `molecule.yml` - Use `dockerfile: ../default/Dockerfile.j2` (relative path)
+   - `molecule.yml` - Use `dockerfile: ../default/Dockerfile.j2` (relative path), enable `prepare` playbook
+   - `prepare.yml` - Create Docker networks required by the stack
    - `converge.yml` - Deploy only this stack
    - `verify.yml` - Tests specific to this stack
    - `cleanup.yml` - Teardown for this stack
@@ -155,14 +157,15 @@ Users configure the role using individual `compose_stack_*` variables:
 - `compose_stack_dst_dir` - Destination directory (default: "{{ compose_stack_base_dir }}/{{ compose_stack_name }}")
 - `compose_stack_file_*` - File ownership and permissions
 - `compose_stack_dir_mode` - Directory permissions
-- `compose_stack_networks` - List of networks to create
-- `compose_stack_destroy_*` - Cleanup options for state=absent
+- `compose_stack_destroy_remove_volumes` - Remove volumes on destroy (default: true)
+- `compose_stack_destroy_remove_images` - Remove images on destroy: "all" or "local" (default: "local")
 
 **Internal Implementation**:
 The role automatically builds a `stack` dictionary from these individual variables in `defaults/main.yml`. This internal dict is what tasks and templates reference (e.g., `{{ stack.name }}`, `{{ stack.domain }}`). Users never need to construct this dict manually.
 
-**Auto-Loaded**:
-- `services` dictionary from `defaults/{{ compose_stack_name }}.yml`
+**Auto-Loaded from Per-Stack Var Files** (`defaults/{{ compose_stack_name }}.yml`):
+- `services` dictionary - Container configurations
+- `networks` list - Networks required by the stack (must be created externally before deploying the stack)
 
 ## Requirements
 

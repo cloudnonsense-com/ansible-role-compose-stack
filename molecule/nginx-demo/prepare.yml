@@ -1,0 +1,16 @@
+---
+
+- name: Prepare
+  hosts: all
+  gather_facts: False
+  tasks:
+
+    - name: Create Docker networks for nginx-demo stack
+      community.docker.docker_network:
+        name: "{{ item }}"
+        driver: bridge
+        state: present
+      loop:
+        - nginx-demo
+
+...

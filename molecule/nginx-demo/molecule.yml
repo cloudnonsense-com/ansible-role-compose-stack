@@ -21,7 +21,7 @@ platforms:
 provisioner:
   name: ansible
   playbooks:
-    # prepare: prepare.yml
+    prepare: prepare.yml
     converge: converge.yml
     cleanup: cleanup.yml
     verify: verify.yml
@@ -36,7 +36,7 @@ scenario:
     - destroy
     - syntax
     - create
-    # - prepare
+    - prepare
     - converge
     - idempotence
     # - side_effect

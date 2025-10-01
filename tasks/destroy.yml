@@ -20,13 +20,4 @@
     path:  "{{ stack.dst_dir }}"
     state: "absent"
 
-- name: "stack ({{ stack.name }}) | remove networks"
-  community.docker.docker_network:
-    name: "{{ item.name }}"
-    state: absent
-  loop: "{{ stack.networks }}"
-  when:
-    - stack.networks is defined and stack.networks | length > 0
-    - stack.destroy.remove_networks
-
 ...

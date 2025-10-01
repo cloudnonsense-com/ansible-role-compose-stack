@@ -1,5 +1,10 @@
 ---
 ### NGINX-DEMO ###
+
+# Networks required for this stack (must be created externally)
+networks:
+  - nginx-demo
+
 services:
   nginxdemo:
     image: "ubuntu/nginx:latest"

@@ -1,13 +1,5 @@
 ---
 # create.yml
-- name: "stack ({{ stack.name }}) | create networks"
-  community.docker.docker_network:
-    name: "{{ item.name }}"
-    driver: "{{ item.driver | default('bridge') }}"
-    state: present
-  loop: "{{ stack.networks }}"
-  when: stack.networks is defined and stack.networks | length > 0
-
 - name: "stack ({{ stack.name }}) | create app dir"
   ansible.builtin.file:
     path:  "{{ stack.dst_dir }}"
