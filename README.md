@@ -282,24 +282,52 @@ The role performs these tasks in order:
 
 ## Testing
 
-The role includes Molecule tests in `molecule/default/`:
+The role includes Molecule tests organized into separate scenarios - one per stack type.
+
+### Test Scenarios
+
+| Scenario | Stacks Tested | Purpose |
+|----------|---------------|---------|
+| `nginx-demo` | nginx-demo only | Test nginx-demo stack in isolation |
+| `grafana` | grafana + influxdb | Test grafana stack in isolation |
+
+**Note**: The `molecule/default/` directory contains only shared resources (Dockerfile.j2). Each stack must be tested via its own scenario.
+
+### Running Tests
 
 ```bash
-# Run all tests
-molecule test
+# Run all stack tests sequentially
+molecule test -s nginx-demo && molecule test -s grafana
 
-# Test specific scenarios
-molecule converge    # Deploy stacks
-molecule verify      # Run verification tests
-molecule destroy     # Clean up
+# Test individual stacks (fast iteration during development)
+molecule test -s nginx-demo
+molecule test -s grafana
+
+# Development workflow - quick deploy and verify
+molecule converge -s nginx-demo
+molecule verify -s nginx-demo
+
+# Test individual phases for a specific stack
+molecule converge -s nginx-demo    # Deploy nginx-demo
+molecule verify -s nginx-demo      # Run verification tests
+molecule idempotence -s nginx-demo # Verify no changes on re-run
+molecule destroy -s nginx-demo     # Clean up
+
+# Run tests in parallel (optional)
+molecule test -s nginx-demo & molecule test -s grafana & wait
 ```
 
-Tests verify:
+### What's Tested
+
+Each scenario verifies:
 - Stack deployment and service availability
-- HTTP response from deployed services
-- Network creation and connectivity
+- HTTP response from deployed services (nginx :37080, grafana :37005, influxdb :8086)
+- Docker network creation and configuration
+- Compose stack status via `docker compose ps`
 - Proper cleanup when destroying stacks
 - Idempotence (running twice produces no changes)
+
+**Tip**: Each stack takes ~30s to test in isolation. Test only the stack you're working on for fastest feedback.
 
 ---
 
