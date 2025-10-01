@@ -7,23 +7,8 @@
 
     - role: cloudnonsense.compose_stack
       vars:
-        stack:
-          name: "nginx-demo"
-          domain: "example.lan"
-          state: "present"
-          base_dir: "/opt/apps"
-          src_file: "nginx-demo/compose.yml.j2"
-          dst_dir: "/opt/apps/nginx-demo"
-          file:
-            owner: "root"
-            mode: "0644"
-          dir:
-            mode: "0755"
-          networks:
-            - { name: "nginx-demo", driver: bridge }
-          destroy:
-            remove_volumes: true
-            remove_images: "local"
-            remove_networks: true
+        compose_stack_name: "nginx-demo"
+        compose_stack_domain: "example.lan"
+        compose_stack_state: "present"
 
 ...

@@ -44,50 +44,52 @@ roles:
 
 ## Role Variables
 
-### Core Stack Configuration
+The role uses individual variables with sensible defaults. All variables are optional except `compose_stack_name` and `compose_stack_state`.
 
-The role uses a single `stack` dictionary variable. Default values are defined in [`defaults/main.yml`](defaults/main.yml):
+### Core Variables
+
+Default values are defined in [`defaults/main.yml`](defaults/main.yml):
 
 ```yaml
-stack:
-  name: ""                  # Stack name (required)
-  state: "present"          # "present" to deploy, "absent" to destroy
-  domain: ""                # Domain for the stack (e.g., "example.lan")
+compose_stack_name: ""                              # Stack name (required)
+compose_stack_state: "present"                      # "present" or "absent"
+compose_stack_domain: ""                            # Domain (e.g., "example.lan")
+compose_stack_base_dir: "/opt/apps"                 # Base directory for stacks
+compose_stack_src_file: "{{ compose_stack_name }}/compose.yml.j2"
+compose_stack_dst_dir: "{{ compose_stack_base_dir }}/{{ compose_stack_name }}"
 
-  base_dir: "/opt/apps"
-  src_file: "{{ stack.name }}/compose.yml.j2"
-  dst_dir: "{{ stack.base_dir }}/{{ stack.name }}"
+# File/directory permissions
+compose_stack_file_owner: "root"
+compose_stack_file_mode: "0644"
+compose_stack_dir_mode: "0755"
 
-  file:
-    owner: "root"
-    mode: "0644"
+# Networks
+compose_stack_networks:
+  - { name: "{{ compose_stack_name }}", driver: bridge }
 
-  dir:
-    mode: "0755"
-
-  networks:
-    - { name: "{{ stack.name }}", driver: bridge }
-
-  destroy:
-    remove_volumes: true
-    remove_images: "local"      # "all" or "local"
-    remove_networks: true
+# Destroy options
+compose_stack_destroy_remove_volumes: true
+compose_stack_destroy_remove_images: "local"        # "all" or "local"
+compose_stack_destroy_remove_networks: true
 ```
 
 ### Variable Reference
 
-| Variable | Type | Required | Default | Description |
-|----------|------|----------|---------|-------------|
-| `stack.name` | string | ✅ | `""` | Stack name, used for directories and container naming |
-| `stack.state` | string | ✅ | `"present"` | `"present"` to deploy/update, `"absent"` to destroy |
-| `stack.domain` | string | ❌ | `""` | Domain name for the stack (used in Traefik labels, etc.) |
-| `stack.base_dir` | string | ✅ | `"/opt/apps"` | Base directory for all stacks |
-| `stack.src_file` | string | ✅ | `"{{ stack.name }}/compose.yml.j2"` | Template path relative to `templates/` |
-| `stack.dst_dir` | string | ✅ | `"{{ stack.base_dir }}/{{ stack.name }}"` | Destination directory for rendered compose.yml |
-| `stack.file.mode` | string | ✅ | `"0644"` | File permissions for compose.yml |
-| `stack.dir.mode` | string | ✅ | `"0755"` | Directory permissions |
-| `stack.networks` | list | ❌ | See above | List of Docker networks to create |
-| `stack.destroy.*` | dict | ✅ (when state=absent) | See above | Cleanup options when destroying |
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `compose_stack_name` | ✅ | `""` | Stack name, used for directories and container naming |
+| `compose_stack_state` | ✅ | `"present"` | `"present"` to deploy/update, `"absent"` to destroy |
+| `compose_stack_domain` | ❌ | `""` | Domain name (used in Traefik labels, etc.) |
+| `compose_stack_base_dir` | ❌ | `"/opt/apps"` | Base directory for all stacks |
+| `compose_stack_src_file` | ❌ | `"{{ compose_stack_name }}/compose.yml.j2"` | Template path relative to `templates/` |
+| `compose_stack_dst_dir` | ❌ | `"{{ compose_stack_base_dir }}/{{ compose_stack_name }}"` | Destination directory for compose.yml |
+| `compose_stack_file_owner` | ❌ | `"root"` | Owner of rendered compose.yml |
+| `compose_stack_file_mode` | ❌ | `"0644"` | File permissions for compose.yml |
+| `compose_stack_dir_mode` | ❌ | `"0755"` | Directory permissions |
+| `compose_stack_networks` | ❌ | See above | List of Docker networks to create |
+| `compose_stack_destroy_*` | ❌ | See above | Cleanup options when destroying |
+
+**Note:** The role internally builds a `stack` dictionary from these variables, which is used by templates.
 
 ---
 
@@ -166,10 +168,9 @@ Located in `templates/includes/`:
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        stack:
-          name: "nginx-demo"
-          domain: "example.lan"
-          state: "present"
+        compose_stack_name: "nginx-demo"
+        compose_stack_domain: "example.lan"
+        compose_stack_state: "present"
 ```
 
 ### Deploy Multiple Stacks
@@ -179,17 +180,13 @@ Located in `templates/includes/`:
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        stack:
-          name: "nginx-demo"
-          domain: "example.lan"
-          state: "present"
+        compose_stack_name: "nginx-demo"
+        compose_stack_domain: "example.lan"
 
     - role: cloudnonsense.compose_stack
       vars:
-        stack:
-          name: "grafana"
-          domain: "example.lan"
-          state: "present"
+        compose_stack_name: "grafana"
+        compose_stack_domain: "example.lan"
 ```
 
 ### Custom Configuration
@@ -199,15 +196,13 @@ Located in `templates/includes/`:
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        stack:
-          name: "myapp"
-          domain: "myapp.example.com"
-          state: "present"
-          base_dir: "/srv/docker"
-          src_file: "myapp/compose.yml.j2"
-          networks:
-            - { name: "myapp-frontend", driver: bridge }
-            - { name: "myapp-backend", driver: bridge }
+        compose_stack_name: "myapp"
+        compose_stack_domain: "myapp.example.com"
+        compose_stack_state: "present"
+        compose_stack_base_dir: "/srv/docker"
+        compose_stack_networks:
+          - { name: "myapp-frontend", driver: bridge }
+          - { name: "myapp-backend", driver: bridge }
 ```
 
 ### Destroy a Stack
@@ -217,13 +212,11 @@ Located in `templates/includes/`:
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        stack:
-          name: "nginx-demo"
-          state: "absent"
-          destroy:
-            remove_volumes: true      # Delete volumes
-            remove_images: "local"    # Remove locally built images
-            remove_networks: true     # Delete networks
+        compose_stack_name: "nginx-demo"
+        compose_stack_state: "absent"
+        compose_stack_destroy_remove_volumes: true      # Delete volumes
+        compose_stack_destroy_remove_images: "local"    # Remove locally built images
+        compose_stack_destroy_remove_networks: true     # Delete networks
 ```
 
 ### Destroy Without Removing Data
@@ -233,13 +226,11 @@ Located in `templates/includes/`:
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        stack:
-          name: "grafana"
-          state: "absent"
-          destroy:
-            remove_volumes: false     # Preserve data volumes
-            remove_images: "none"     # Keep images
-            remove_networks: false    # Keep networks
+        compose_stack_name: "grafana"
+        compose_stack_state: "absent"
+        compose_stack_destroy_remove_volumes: false     # Preserve data volumes
+        compose_stack_destroy_remove_images: "none"     # Keep images
+        compose_stack_destroy_remove_networks: false    # Keep networks
 ```
 
 ---
