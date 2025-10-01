@@ -38,9 +38,7 @@
       - stack.destroy.remove_images in ['all', 'local']
       - stack.destroy.remove_volumes is defined
       - stack.destroy.remove_volumes is boolean
-      - stack.destroy.remove_networks is defined
-      - stack.destroy.remove_networks is boolean
-    fail_msg: "When stack.state=absent, required: stack.destroy.{remove_images,remove_volumes,remove_networks}"
+    fail_msg: "When stack.state=absent, required: stack.destroy.{remove_images,remove_volumes}"
     quiet: true
   when: stack.state == "absent"
 

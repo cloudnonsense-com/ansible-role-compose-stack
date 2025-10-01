@@ -15,12 +15,8 @@ compose_stack_file_mode: "0644"
 
 compose_stack_dir_mode: "0755"
 
-compose_stack_networks:
-  - { name: "{{ compose_stack_name }}", driver: bridge }
-
 compose_stack_destroy_remove_volumes: true
 compose_stack_destroy_remove_images: "local"  # (all|local)
-compose_stack_destroy_remove_networks: true
 
 # Computed dict (for internal use and backward compatibility)
 # This is automatically built from the individual variables above
@@ -36,9 +32,7 @@ stack:
     mode: "{{ compose_stack_file_mode }}"
   dir:
     mode: "{{ compose_stack_dir_mode }}"
-  networks: "{{ compose_stack_networks }}"
   destroy:
     remove_volumes: "{{ compose_stack_destroy_remove_volumes }}"
     remove_images: "{{ compose_stack_destroy_remove_images }}"
-    remove_networks: "{{ compose_stack_destroy_remove_networks }}"
 ...
