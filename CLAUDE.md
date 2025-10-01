@@ -19,7 +19,7 @@ The role follows a strict execution flow in tasks/main.yml:
 
 The role uses a two-layer configuration pattern:
 
-1. **Core Stack Config** (`defaults/main.yml`) - Defines the `stack` dictionary with paths, permissions, network, and destroy settings
+1. **Core Stack Config** (`defaults/main.yml`) - Defines individual `compose_stack_*` variables which are automatically composed into a `stack` dictionary for internal use
 2. **Per-Stack Services** (`defaults/{{ stack.name }}.yml`) - Defines the `services` dictionary with container-specific config
 
 Templates in `templates/{{ stack.name }}/compose.yml.j2` reference both dictionaries and use modular includes from `templates/includes/` for reusable blocks (service_common, service_ports, service_labels, service_networks, service_configs, networks, configs, etc.).
@@ -143,19 +143,26 @@ When adding new stack variables:
 
 ## Key Variables
 
-The `stack` dictionary drives all behavior:
+Users configure the role using individual `compose_stack_*` variables:
 
 **Required Core Variables**:
-- `stack.name` - Stack identifier
-- `stack.state` - "present" or "absent"
-- `stack.dst_dir` - Destination directory for compose.yml
+- `compose_stack_name` - Stack identifier
+- `compose_stack_state` - "present" or "absent"
 
-**State-Specific**:
-- When `state: present` - requires `src_file`, `file.mode`, `dir.mode`
-- When `state: absent` - requires `destroy.{remove_images,remove_volumes,remove_networks}`
+**Optional Configuration**:
+- `compose_stack_domain` - Domain name for the stack
+- `compose_stack_base_dir` - Base directory (default: "/opt/apps")
+- `compose_stack_dst_dir` - Destination directory (default: "{{ compose_stack_base_dir }}/{{ compose_stack_name }}")
+- `compose_stack_file_*` - File ownership and permissions
+- `compose_stack_dir_mode` - Directory permissions
+- `compose_stack_networks` - List of networks to create
+- `compose_stack_destroy_*` - Cleanup options for state=absent
+
+**Internal Implementation**:
+The role automatically builds a `stack` dictionary from these individual variables in `defaults/main.yml`. This internal dict is what tasks and templates reference (e.g., `{{ stack.name }}`, `{{ stack.domain }}`). Users never need to construct this dict manually.
 
 **Auto-Loaded**:
-- `services` dictionary from `defaults/{{ stack.name }}.yml`
+- `services` dictionary from `defaults/{{ compose_stack_name }}.yml`
 
 ## Requirements
 

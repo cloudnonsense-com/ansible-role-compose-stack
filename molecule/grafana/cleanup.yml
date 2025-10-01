@@ -8,23 +8,8 @@
 
     - role: cloudnonsense.compose_stack
       vars:
-        stack:
-          name: "grafana"
-          state: "absent"
-          base_dir: "/opt/apps"
-          src_file: "grafana/compose.yml.j2"
-          dst_dir: "/opt/apps/grafana"
-          file:
-            owner: "root"
-            mode: "0644"
-          dir:
-            mode: "0755"
-          networks:
-            - { name: "grafana", driver: bridge }
-          destroy:
-            remove_volumes: true
-            remove_images: "local"
-            remove_networks: true
+        compose_stack_name: "grafana"
+        compose_stack_state: "absent"
 
   post_tasks:
     - name: Remove all unnamed (dangling) Docker volumes
