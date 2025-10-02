@@ -1,5 +1,4 @@
 ---
-
 - name: Verify
   hosts: all
   gather_facts: False
@@ -33,29 +32,28 @@
         success_msg: "Nginx is serving the expected content."
 
     # Docker network tests
-    - name: Check nginx-demo network exists
-      ansible.builtin.command: docker network inspect nginx-demo
+    - name: Check nginxdemo network exists
+      ansible.builtin.command: docker network inspect nginxdemo
       register: nginx_network
       changed_when: false
 
-    - name: Verify nginx-demo network exists
+    - name: Verify nginxdemo network exists
       ansible.builtin.assert:
         that:
           - nginx_network.rc == 0
-        fail_msg: "nginx-demo network does not exist"
-        success_msg: "nginx-demo network exists"
+        fail_msg: "nginxdemo network does not exist"
+        success_msg: "nginxdemo network exists"
 
     # Docker compose stack tests
-    - name: Check nginx-demo compose stack status
-      ansible.builtin.command: docker compose -f /opt/apps/nginx-demo/compose.yml ps
+    - name: Check nginxdemo compose stack status
+      ansible.builtin.command: docker compose -f /opt/apps/nginxdemo/compose.yml ps
       register: nginx_stack
       changed_when: false
 
-    - name: Verify nginx-demo stack is running
+    - name: Verify nginxdemo stack is running
       ansible.builtin.assert:
         that:
-          - "'nginx-demo' in nginx_stack.stdout"
-        fail_msg: "nginx-demo stack is not running properly"
-        success_msg: "nginx-demo stack is running"
-
+          - "'nginxdemo' in nginx_stack.stdout"
+        fail_msg: "nginxdemo stack is not running properly"
+        success_msg: "nginxdemo stack is running"
 ...

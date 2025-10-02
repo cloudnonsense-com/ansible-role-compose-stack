@@ -1,10 +1,8 @@
 ---
-
 - name: Prepare
   hosts: all
   gather_facts: False
   tasks:
-
     - name: Create Docker networks for grafana stack
       community.docker.docker_network:
         name: "{{ item }}"
@@ -12,5 +10,4 @@
         state: present
       loop:
         - grafana
-
 ...

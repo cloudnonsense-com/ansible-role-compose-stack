@@ -1,14 +1,11 @@
 ---
-
 - name: Converge
   hosts: all
   gather_facts: True
   roles:
-
     - role: cloudnonsense.compose_stack
       vars:
-        compose_stack_name: "nginx-demo"
+        compose_stack_name: "nginxdemo"
         compose_stack_domain: "example.lan"
         compose_stack_state: "present"
-
 ...

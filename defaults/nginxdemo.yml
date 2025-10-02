@@ -1,12 +1,7 @@
 ---
-### NGINX-DEMO ###
-
-# Networks required for this stack (must be created externally)
-networks:
-  - nginx-demo
-
 services:
   nginxdemo:
+    container_name: "nginxdemo"
     image: "ubuntu/nginx:latest"
     restart: "unless-stopped"
 
@@ -25,4 +20,7 @@ services:
         uid: "33"
         gid: "33"
         mode: "0644"
+
+networks:
+  - nginxdemo
 ...
