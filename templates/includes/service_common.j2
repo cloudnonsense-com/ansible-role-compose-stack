@@ -1,5 +1,5 @@
 {# includes/service_common.j2 #}
-    container_name: "{{ svc.container_name | default(stack.name) }}"
-    image: "{{ svc.image }}"
-    restart: "{{ svc.restart | default('unless-stopped') }}"
+    container_name: "{{ svc_data.container_name | default(stack.name) }}"
+    image: "{{ svc_data.image }}"
+    restart: "{{ svc_data.restart | default('unless-stopped') }}"
 {# end #}

@@ -1,9 +1,8 @@
-{# --- NGINX-DEMO ---#}
+{# Universal compose.yml template - iterates over services dictionary #}
 ---
-{% set svc = services.nginxdemo %}
 services:
-
-  "{{ stack.name }}":
+{% for svc_name, svc_data in services.items() %}
+  {{ svc_name }}:
 {% include "includes/service_common.j2" %}
 {% include "includes/service_logging.j2" %}
 {% include "includes/service_ports.j2" %}
@@ -11,6 +10,7 @@ services:
 {% include "includes/service_networks.j2" %}
 {% include "includes/service_configs.j2" %}
 
+{% endfor %}
 {% include "includes/networks.j2" %}
 {% include "includes/configs.j2" %}
 ...
