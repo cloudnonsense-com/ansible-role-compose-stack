@@ -1,10 +1,20 @@
 {# includes/configs.j2 #}
-{% if svc.configs is defined and svc.configs | length > 0 %}
+{% set has_configs = namespace(found=false) %}
+{% for svc_name, svc_data in services.items() %}
+{% if svc_data.configs is defined and svc_data.configs | length > 0 %}
+{% set has_configs.found = true %}
+{% endif %}
+{% endfor %}
+{% if has_configs.found %}
 configs:
-{% for config in svc.configs %}
+{% for svc_name, svc_data in services.items() %}
+{% if svc_data.configs is defined and svc_data.configs | length > 0 %}
+{% for config in svc_data.configs %}
   "{{ config.source }}":
     content: |
       {{ lookup('template', role_path ~ '/templates/' ~ stack.name ~ '/' ~ config.source ~ '.j2') | indent(6) }}
+{% endfor %}
+{% endif %}
 {% endfor %}
 {% endif %}
 {# end #}

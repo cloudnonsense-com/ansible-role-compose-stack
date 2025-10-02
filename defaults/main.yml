@@ -7,7 +7,7 @@ compose_stack_state: "present"
 compose_stack_domain: ""  # demo value: "example.lan"
 
 compose_stack_base_dir: "/opt/apps"
-compose_stack_src_file: "{{ compose_stack_name }}/compose.yml.j2"
+compose_stack_src_file: "compose.yml.j2"
 compose_stack_dst_dir: "{{ compose_stack_base_dir }}/{{ compose_stack_name }}"
 
 compose_stack_file_owner: "root"
@@ -17,22 +17,4 @@ compose_stack_dir_mode: "0755"
 
 compose_stack_destroy_remove_volumes: true
 compose_stack_destroy_remove_images: "local"  # (all|local)
-
-# Computed dict (for internal use and backward compatibility)
-# This is automatically built from the individual variables above
-stack:
-  name: "{{ compose_stack_name }}"
-  state: "{{ compose_stack_state }}"
-  domain: "{{ compose_stack_domain }}"
-  base_dir: "{{ compose_stack_base_dir }}"
-  src_file: "{{ compose_stack_src_file }}"
-  dst_dir: "{{ compose_stack_dst_dir }}"
-  file:
-    owner: "{{ compose_stack_file_owner }}"
-    mode: "{{ compose_stack_file_mode }}"
-  dir:
-    mode: "{{ compose_stack_dir_mode }}"
-  destroy:
-    remove_volumes: "{{ compose_stack_destroy_remove_volumes }}"
-    remove_images: "{{ compose_stack_destroy_remove_images }}"
 ...
