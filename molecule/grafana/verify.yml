@@ -1,10 +1,8 @@
 ---
-
 - name: Verify
   hosts: all
   gather_facts: False
   roles:
-
   tasks:
     # Grafana tests
     - name: Check Grafana HTTP response
@@ -60,5 +58,4 @@
           - "'influxdb' in grafana_stack.stdout"
         fail_msg: "grafana stack is not running properly"
         success_msg: "grafana stack is running"
-
 ...

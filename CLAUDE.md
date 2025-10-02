@@ -54,31 +54,31 @@ Uses Molecule for integration testing with per-stack scenarios.
 ### Test Commands
 
 The role uses separate Molecule scenarios - one per stack type:
-- `nginx-demo` - Tests only nginx-demo stack
+- `nginxdemo` - Tests only nginxdemo stack
 - `grafana` - Tests only grafana stack
 
 **Note**: `molecule/default/` contains only shared resources (Dockerfile.j2), not a runnable scenario.
 
 ```bash
 # Test all stacks sequentially
-molecule test -s nginx-demo && molecule test -s grafana
+molecule test -s nginxdemo && molecule test -s grafana
 
 # Test individual stacks (use during development)
-molecule test -s nginx-demo
+molecule test -s nginxdemo
 molecule test -s grafana
 
 # Individual phases (must specify scenario)
-molecule create -s nginx-demo     # Build test container
-molecule converge -s nginx-demo   # Deploy nginx-demo stack
-molecule idempotence -s nginx-demo # Verify no changes on re-run
-molecule verify -s nginx-demo     # Run verification tests
-molecule destroy -s nginx-demo    # Cleanup
+molecule create -s nginxdemo     # Build test container
+molecule converge -s nginxdemo   # Deploy nginxdemo stack
+molecule idempotence -s nginxdemo # Verify no changes on re-run
+molecule verify -s nginxdemo     # Run verification tests
+molecule destroy -s nginxdemo    # Cleanup
 
 # Development workflow (fast iteration on single stack)
-molecule converge -s nginx-demo && molecule verify -s nginx-demo
+molecule converge -s nginxdemo && molecule verify -s nginxdemo
 
 # Parallel testing (optional)
-molecule test -s nginx-demo & molecule test -s grafana & wait
+molecule test -s nginxdemo & molecule test -s grafana & wait
 ```
 
 ### Test Environment
@@ -118,11 +118,11 @@ The verify.yml playbook tests:
 The role organizes Molecule tests into **separate scenarios - one per stack type**:
 
 **Key principles:**
-- Each stack has its own isolated scenario (see nginx-demo or grafana as examples)
+- Each stack has its own isolated scenario (see nginxdemo or grafana as examples)
 - `molecule/default/` contains only shared resources (Dockerfile.j2), not a runnable scenario
 - No test duplication - each stack's tests exist in exactly one place
 - Test only what you're working on for fast iteration (~30s per stack)
-- Run all scenarios sequentially before commits: `molecule test -s nginx-demo && molecule test -s grafana`
+- Run all scenarios sequentially before commits: `molecule test -s nginxdemo && molecule test -s grafana`
 
 **Why this pattern:**
 - **Zero duplication** - Single source of truth for each stack's tests
