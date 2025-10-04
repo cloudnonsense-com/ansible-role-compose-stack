@@ -4,12 +4,16 @@
   ansible.builtin.file:
     path:  "{{ stack.dst_dir }}"
     state: "directory"
+    owner: "{{ stack.file.owner }}"
+    group: "{{ stack.file.group }}"
     mode:  "{{ stack.dir.mode }}"
 
 - name: "stack ({{ stack.name }}) | render compose.yml"
   ansible.builtin.template:
     src:  "{{ stack.src_file }}"
     dest: "{{ stack.dst_dir }}/compose.yml"
+    owner: "{{ stack.file.owner }}"
+    group: "{{ stack.file.group }}"
     mode: "{{ stack.file.mode }}"
 
 - name: "stack ({{ stack.name }}) | start compose stack"
