@@ -22,6 +22,7 @@ ansible-galaxy install cloudnonsense.compose_stack
   roles:
     - role: cloudnonsense.compose_stack
       vars:
+        compose_stack_type: "nginxdemo"
         compose_stack_name: "myapp"
         compose_stack_domain: "example.lan"
         compose_stack_state: "present"
@@ -30,7 +31,8 @@ ansible-galaxy install cloudnonsense.compose_stack
 ## Variables
 
 **Required:**
-- `compose_stack_name` - Stack identifier
+- `compose_stack_type` - Stack type to deploy (determines which template/vars to use, e.g., `"nginxdemo"`, `"grafana"`)
+- `compose_stack_name` - Deployment instance identifier (allows multiple deployments of same type, e.g., `"grafana-dev"`, `"grafana-prd"`)
 - `compose_stack_state` - `"present"` or `"absent"`
 
 **Optional:**
@@ -49,7 +51,7 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
 - `nginxdemo` - Basic nginx demo application
 - `grafana` - Grafana + InfluxDB monitoring stack
 
-**Note:** Stack configurations are defined in `vars/{{ stack_name }}.yml` and are not user-modifiable. Some stacks may expose minimal configuration options via `defaults/{{ stack_name }}.yml` when `stack_meta.has_user_vars: true`.
+**Note:** Stack configurations are defined in `vars/{{ compose_stack_type }}.yml` and are not user-modifiable. Some stacks may expose minimal configuration options via `defaults/{{ compose_stack_type }}.yml` when `stack_meta.has_user_vars: true`.
 
 ## Usage Examples
 
@@ -60,6 +62,7 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
   roles:
     - role: cloudnonsense.compose_stack
       vars:
+        compose_stack_type: "nginxdemo"
         compose_stack_name: "nginxdemo"
         compose_stack_domain: "example.lan"
 ```
@@ -71,6 +74,7 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
   roles:
     - role: cloudnonsense.compose_stack
       vars:
+        compose_stack_type: "nginxdemo"
         compose_stack_name: "nginxdemo"
         compose_stack_state: "absent"
 ```
@@ -82,22 +86,42 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
   roles:
     - role: cloudnonsense.compose_stack
       vars:
+        compose_stack_type: "nginxdemo"
         compose_stack_name: "nginxdemo"
         compose_stack_domain: "example.lan"
 
     - role: cloudnonsense.compose_stack
       vars:
+        compose_stack_type: "grafana"
         compose_stack_name: "grafana"
         compose_stack_domain: "example.lan"
+```
+
+### Deploy Multiple Instances of Same Stack Type
+
+```yaml
+- hosts: docker_hosts
+  roles:
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "grafana"
+        compose_stack_name: "grafana-dev"
+        compose_stack_domain: "dev.example.lan"
+
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "grafana"
+        compose_stack_name: "grafana-prd"
+        compose_stack_domain: "prd.example.lan"
 ```
 
 ## Architecture
 
 The role uses a declarative, template-based approach:
 
-- **Opinionated Stack Definitions** (`vars/{{ stack_name }}.yml`) - Pre-configured services, networks, volumes, and all compose settings
+- **Opinionated Stack Definitions** (`vars/{{ compose_stack_type }}.yml`) - Pre-configured services, networks, volumes, and all compose settings
 - **Universal Template** (`templates/compose.yml.j2`) - Renders any stack definition using modular includes
-- **Minimal User Input** - Users specify stack name and optional domain; the role handles the rest
+- **Minimal User Input** - Users specify stack type, instance name, and optional domain; the role handles the rest
 - **External Networks** - Networks must be created externally before deploying stacks
 
 ## Testing

@@ -12,7 +12,7 @@ configs:
 {% for config in svc_data.configs %}
   "{{ config.source }}":
     content: |
-      {{ lookup('template', role_path ~ '/templates/' ~ stack.name ~ '/' ~ config.source ~ '.j2') | indent(6) }}
+      {{ lookup('template', role_path ~ '/templates/' ~ stack.type ~ '/' ~ config.source ~ '.j2') | indent(6) }}
 {% endfor %}
 {% endif %}
 {% endfor %}

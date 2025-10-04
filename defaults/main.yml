@@ -1,6 +1,7 @@
 ---
 # defaults file for ansible-role-compose-stack
 
+compose_stack_type: ""
 compose_stack_name: ""
 compose_stack_state: "present"
 compose_stack_domain: ""

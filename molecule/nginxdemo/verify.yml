@@ -44,15 +44,15 @@
         success_msg: "nginxdemo network exists"
 
     # Docker compose stack tests
-    - name: Check nginxdemo compose stack status
-      ansible.builtin.command: docker compose -f /opt/apps/nginxdemo/compose.yml ps
+    - name: Check nginxdemo-dev compose stack status
+      ansible.builtin.command: docker compose -f /opt/apps/nginxdemo-dev/compose.yml ps
       register: nginx_stack
       changed_when: false
 
-    - name: Verify nginxdemo stack is running
+    - name: Verify nginxdemo-dev stack is running
       ansible.builtin.assert:
         that:
           - "'nginxdemo' in nginx_stack.stdout"
-        fail_msg: "nginxdemo stack is not running properly"
-        success_msg: "nginxdemo stack is running"
+        fail_msg: "nginxdemo-dev stack is not running properly"
+        success_msg: "nginxdemo-dev stack is running"
 ...

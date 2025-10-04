@@ -46,16 +46,16 @@
         success_msg: "grafana network exists"
 
     # Docker compose stack tests
-    - name: Check grafana compose stack status
-      ansible.builtin.command: docker compose -f /opt/apps/grafana/compose.yml ps
+    - name: Check grafana-dev compose stack status
+      ansible.builtin.command: docker compose -f /opt/apps/grafana-dev/compose.yml ps
       register: grafana_stack
       changed_when: false
 
-    - name: Verify grafana stack is running
+    - name: Verify grafana-dev stack is running
       ansible.builtin.assert:
         that:
           - "'grafana' in grafana_stack.stdout"
           - "'influxdb' in grafana_stack.stdout"
-        fail_msg: "grafana stack is not running properly"
-        success_msg: "grafana stack is running"
+        fail_msg: "grafana-dev stack is not running properly"
+        success_msg: "grafana-dev stack is running"
 ...

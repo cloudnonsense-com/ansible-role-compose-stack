@@ -12,13 +12,15 @@
 - name: Validate core stack variables
   ansible.builtin.assert:
     that:
+      - stack.type is defined
+      - stack.type | length > 0
       - stack.name is defined
       - stack.name | length > 0
       - stack.state is defined
       - stack.state in ['present', 'absent']
       - stack.dst_dir is defined
       - stack.dst_dir | length > 0
-    fail_msg: "Missing or invalid core stack variables. Required: stack.name, stack.state (present|absent), stack.dst_dir"
+    fail_msg: "Missing or invalid core stack variables. Required: stack.type, stack.name, stack.state (present|absent), stack.dst_dir"
     quiet: true
 
 - name: Validate variables for state=present

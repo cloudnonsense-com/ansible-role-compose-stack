@@ -5,7 +5,8 @@
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        compose_stack_name: "nginxdemo"
+        compose_stack_type: "nginxdemo"
+        compose_stack_name: "nginxdemo-dev"
         compose_stack_state: "absent"
   post_tasks:
     - name: Remove all unnamed (dangling) Docker volumes

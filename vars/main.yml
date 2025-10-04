@@ -7,6 +7,7 @@ compose_stack_dst_dir: "{{ compose_stack_base_dir }}/{{ compose_stack_name }}"
 # Computed dict (for internal use and backward compatibility)
 # This is automatically built from the individual variables in defaults/main.yml
 stack:
+  type: "{{ compose_stack_type }}"
   name: "{{ compose_stack_name }}"
   state: "{{ compose_stack_state }}"
   domain: "{{ compose_stack_domain }}"
