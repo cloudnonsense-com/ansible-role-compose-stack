@@ -19,16 +19,27 @@ The role follows a strict execution flow in tasks/main.yml:
 
 The role uses a two-layer configuration pattern:
 
-1. **Core Stack Config** (`defaults/main.yml`) - Defines individual `compose_stack_*` variables which are automatically composed into a `stack` dictionary for internal use
+1. **Core Stack Config** (`defaults/main.yml`) - Defines individual `compose_stack_*` variables which are automatically composed into a `stack` dictionary (in `vars/main.yml`) for internal use
 2. **Per-Stack Services** (`defaults/{{ stack.name }}.yml`) - Defines the `services` dictionary with container-specific config and a `networks` list specifying which networks the stack requires (networks must be created externally)
 
-Templates in `templates/{{ stack.name }}/compose.yml.j2` reference both dictionaries and use modular includes from `templates/includes/` for reusable blocks (service_common, service_ports, service_labels, service_networks, service_configs, networks, configs, etc.).
+The **universal template** at `templates/compose.yml.j2` iterates over the `services` dictionary and uses modular includes from `templates/includes/` for reusable blocks (service_common, service_logging, service_ports, service_labels, service_networks, service_configs, networks, configs).
 
-**Important Pattern**: Templates set a local variable referencing the service config, e.g.:
+**Template Pattern**: The main template uses a for loop to iterate over all services:
 ```jinja2
-{% set svc = services.nginxdemo %}
+{% for svc_name, svc_data in services.items() %}
+  {{ svc_name }}:
+{% include "includes/service_common.j2" %}
+{% include "includes/service_logging.j2" %}
+{% include "includes/service_ports.j2" %}
+{% include "includes/service_labels.j2" %}
+{% include "includes/service_networks.j2" %}
+{% include "includes/service_configs.j2" %}
+{% endfor %}
+{% include "includes/networks.j2" %}
+{% include "includes/configs.j2" %}
 ```
-Then include modular templates that reference `svc` for that service's configuration.
+
+The include templates access service properties through the loop variables `svc_name` and `svc_data`.
 
 ### Task Organization
 
@@ -103,9 +114,9 @@ The verify.yml playbook tests:
 
 1. Create `defaults/{{ stack_name }}.yml` with:
    - `networks` list - Networks required by this stack (must be created externally)
-   - `services` dictionary - Container configurations
-2. Create `templates/{{ stack_name }}/compose.yml.j2` using standard includes
-3. Use the existing pattern: `{% set svc = services.servicename %}` then include modular templates
+   - `services` dictionary - Container configurations with keys matching service names
+2. The universal template at `templates/compose.yml.j2` will automatically render all services - no per-stack template needed
+3. If custom templates are needed (e.g., config files), create `templates/{{ stack_name }}/` directory with those files
 4. Create new Molecule scenario directory `molecule/{{ stack_name }}/`:
    - `molecule.yml` - Use `dockerfile: ../default/Dockerfile.j2` (relative path), enable `prepare` playbook
    - `prepare.yml` - Create Docker networks required by the stack
@@ -139,9 +150,9 @@ When adding new stack variables:
 
 ### Modifying Templates
 
-- Reusable logic belongs in `templates/includes/*.j2`
-- Stack-specific templates in `templates/{{ stack_name }}/`
-- Always reference `svc` variable for service config (set via `{% set svc = services.servicename %}`)
+- **Universal template**: `templates/compose.yml.j2` - Iterates over all services using `{% for svc_name, svc_data in services.items() %}`
+- **Reusable includes**: `templates/includes/*.j2` - Common service configuration blocks that reference loop variables
+- **Stack-specific assets**: `templates/{{ stack_name }}/` - For custom config files, static assets, etc. (not compose templates)
 
 ## Key Variables
 
@@ -152,16 +163,18 @@ Users configure the role using individual `compose_stack_*` variables:
 - `compose_stack_state` - "present" or "absent"
 
 **Optional Configuration**:
-- `compose_stack_domain` - Domain name for the stack
+- `compose_stack_domain` - Domain name for the stack (default: "")
 - `compose_stack_base_dir` - Base directory (default: "/opt/apps")
+- `compose_stack_src_file` - Template filename (default: "compose.yml.j2")
 - `compose_stack_dst_dir` - Destination directory (default: "{{ compose_stack_base_dir }}/{{ compose_stack_name }}")
-- `compose_stack_file_*` - File ownership and permissions
-- `compose_stack_dir_mode` - Directory permissions
+- `compose_stack_file_owner` - File ownership (default: "root")
+- `compose_stack_file_mode` - File permissions (default: "0644")
+- `compose_stack_dir_mode` - Directory permissions (default: "0755")
 - `compose_stack_destroy_remove_volumes` - Remove volumes on destroy (default: true)
 - `compose_stack_destroy_remove_images` - Remove images on destroy: "all" or "local" (default: "local")
 
 **Internal Implementation**:
-The role automatically builds a `stack` dictionary from these individual variables in `defaults/main.yml`. This internal dict is what tasks and templates reference (e.g., `{{ stack.name }}`, `{{ stack.domain }}`). Users never need to construct this dict manually.
+The role automatically builds a `stack` dictionary from these individual variables in `vars/main.yml`. This internal dict is what tasks and templates reference (e.g., `{{ stack.name }}`, `{{ stack.domain }}`). Users never need to construct this dict manually.
 
 **Auto-Loaded from Per-Stack Var Files** (`defaults/{{ compose_stack_name }}.yml`):
 - `services` dictionary - Container configurations
