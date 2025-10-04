@@ -12,7 +12,7 @@ This is an Ansible role (`cloudnonsense.compose_stack`) for managing Docker Comp
 
 The role follows a strict execution flow in tasks/main.yml:
 1. **Validate** - Check all required variables (tasks/validate.yml)
-2. **Load Per-Stack Variables** - Auto-include `defaults/{{ stack.name }}.yml`
+2. **Load Per-Stack Variables** - Auto-include `vars/{{ stack.name }}.yml`
 3. **Execute State** - Run create.yml or destroy.yml based on `stack.state`
 
 ### Template System
@@ -20,7 +20,7 @@ The role follows a strict execution flow in tasks/main.yml:
 The role uses a two-layer configuration pattern:
 
 1. **Core Stack Config** (`defaults/main.yml`) - Defines individual `compose_stack_*` variables which are automatically composed into a `stack` dictionary (in `vars/main.yml`) for internal use
-2. **Per-Stack Services** (`defaults/{{ stack.name }}.yml`) - Defines the `services` dictionary with container-specific config and a `networks` list specifying which networks the stack requires (networks must be created externally)
+2. **Per-Stack Definitions** (`vars/{{ stack.name }}.yml`) - Opinionated, pre-configured stack definitions with hardcoded settings for `services`, `networks`, `volumes`, `commands`, `environment`, and all other compose-related configuration. These are NOT user-modifiable and represent the canonical "as-is" configuration for each stack.
 
 The **universal template** at `templates/compose.yml.j2` iterates over the `services` dictionary and uses modular includes from `templates/includes/` for reusable blocks (service_common, service_logging, service_ports, service_labels, service_networks, service_configs, networks, configs).
 
@@ -112,12 +112,19 @@ The verify.yml playbook tests:
 
 ### Adding a New Stack
 
-1. Create `defaults/{{ stack_name }}.yml` with:
+1. Create `vars/{{ stack_name }}.yml` with opinionated, static configuration:
+   - `stack_meta` dictionary with `has_user_vars: false` flag (set to `true` if step 2 applies)
    - `networks` list - Networks required by this stack (must be created externally)
    - `services` dictionary - Container configurations with keys matching service names
-2. The universal template at `templates/compose.yml.j2` will automatically render all services - no per-stack template needed
-3. If custom templates are needed (e.g., config files), create `templates/{{ stack_name }}/` directory with those files
-4. Create new Molecule scenario directory `molecule/{{ stack_name }}/`:
+   - All hardcoded settings: volumes, commands, environment variables, etc.
+2. (Optional) If minimal user configuration is needed:
+   - Set `stack_meta.has_user_vars: true` in `vars/{{ stack_name }}.yml`
+   - Create `defaults/{{ stack_name }}.yml` to expose ONLY those specific variables (e.g., selecting from pre-defined dashboards)
+   - The role will auto-load this file when `stack_meta.has_user_vars` is `true`
+   - Principle: users consume stacks "as-is" with minimal inputs. Modified versions = new stack variants in the role.
+3. The universal template at `templates/compose.yml.j2` will automatically render all services - no per-stack template needed
+4. If custom templates are needed (e.g., config files), create `templates/{{ stack_name }}/` directory with those files
+5. Create new Molecule scenario directory `molecule/{{ stack_name }}/`:
    - `molecule.yml` - Use `dockerfile: ../default/Dockerfile.j2` (relative path), enable `prepare` playbook
    - `prepare.yml` - Create Docker networks required by the stack
    - `converge.yml` - Deploy only this stack
@@ -165,8 +172,6 @@ Users configure the role using individual `compose_stack_*` variables:
 **Optional Configuration**:
 - `compose_stack_domain` - Domain name for the stack (default: "")
 - `compose_stack_base_dir` - Base directory (default: "/opt/apps")
-- `compose_stack_src_file` - Template filename (default: "compose.yml.j2")
-- `compose_stack_dst_dir` - Destination directory (default: "{{ compose_stack_base_dir }}/{{ compose_stack_name }}")
 - `compose_stack_file_owner` - File ownership (default: "root")
 - `compose_stack_file_mode` - File permissions (default: "0644")
 - `compose_stack_dir_mode` - Directory permissions (default: "0755")
@@ -176,9 +181,18 @@ Users configure the role using individual `compose_stack_*` variables:
 **Internal Implementation**:
 The role automatically builds a `stack` dictionary from these individual variables in `vars/main.yml`. This internal dict is what tasks and templates reference (e.g., `{{ stack.name }}`, `{{ stack.domain }}`). Users never need to construct this dict manually.
 
-**Auto-Loaded from Per-Stack Var Files** (`defaults/{{ compose_stack_name }}.yml`):
-- `services` dictionary - Container configurations
+**Auto-Loaded from Per-Stack Definitions** (`vars/{{ compose_stack_name }}.yml`):
+- `stack_meta` dictionary:
+  - `has_user_vars` (boolean) - Controls auto-loading of `defaults/{{ compose_stack_name }}.yml`
+- `services` dictionary - Pre-configured container definitions
 - `networks` list - Networks required by the stack (must be created externally before deploying the stack)
+- All stack-specific compose configuration (volumes, commands, environment, etc.)
+
+**Optional Stack-Specific User Variables** (`defaults/{{ compose_stack_name }}.yml`):
+- Only created when `stack_meta.has_user_vars: true` in the stack's `vars/` file
+- Auto-loaded by the role when the flag is set
+- Example: Selecting from pre-defined dashboard options
+- Principle: Stacks are opinionated and consumed "as-is" with minimal user input
 
 ## Requirements
 

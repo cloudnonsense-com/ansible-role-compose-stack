@@ -1,4 +1,7 @@
 ---
+stack_meta:
+  has_user_vars: false
+
 services:
   grafana:
     container_name: "grafana"
