@@ -22,7 +22,7 @@ ansible-galaxy install cloudnonsense.compose_stack
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        compose_stack_type: "nginxdemo"
+        compose_stack_type: "demo"
         compose_stack_name: "myapp"
         compose_stack_domain: "example.lan"
         compose_stack_state: "present"
@@ -31,7 +31,7 @@ ansible-galaxy install cloudnonsense.compose_stack
 ## Variables
 
 **Required:**
-- `compose_stack_type` - Stack type to deploy (determines which template/vars to use, e.g., `"nginxdemo"`, `"grafana"`)
+- `compose_stack_type` - Stack type to deploy (determines which template/vars to use, e.g., `"demo"`, `"grafana"`)
 - `compose_stack_name` - Deployment instance identifier (allows multiple deployments of same type, e.g., `"grafana-dev"`, `"grafana-prd"`)
 - `compose_stack_state` - `"present"` or `"absent"`
 
@@ -48,7 +48,7 @@ ansible-galaxy install cloudnonsense.compose_stack
 
 Each stack comes with pre-configured, opinionated settings. Stacks are consumed "as-is" with minimal user input:
 
-- `nginxdemo` - Basic nginx demo application
+- `demo` - Basic nginx demo application
 - `grafana` - Grafana + InfluxDB monitoring stack
 
 **Note:** Stack configurations are defined in `vars/{{ compose_stack_type }}.yml` and are not user-modifiable. Some stacks may expose minimal configuration options via `defaults/{{ compose_stack_type }}.yml` when `stack_meta.has_user_vars: true`.
@@ -62,8 +62,8 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        compose_stack_type: "nginxdemo"
-        compose_stack_name: "nginxdemo"
+        compose_stack_type: "demo"
+        compose_stack_name: "demo"
         compose_stack_domain: "example.lan"
 ```
 
@@ -74,8 +74,8 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        compose_stack_type: "nginxdemo"
-        compose_stack_name: "nginxdemo"
+        compose_stack_type: "demo"
+        compose_stack_name: "demo"
         compose_stack_state: "absent"
 ```
 
@@ -86,8 +86,8 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        compose_stack_type: "nginxdemo"
-        compose_stack_name: "nginxdemo"
+        compose_stack_type: "demo"
+        compose_stack_name: "demo"
         compose_stack_domain: "example.lan"
 
     - role: cloudnonsense.compose_stack
@@ -133,14 +133,14 @@ Molecule tests are organized per-stack with a test-all helper script:
 ./test-all-scenarios.sh
 
 # Test all stacks (manual)
-molecule test -s nginxdemo && molecule test -s grafana
+molecule test -s demo && molecule test -s grafana
 
 # Test individual stack
-molecule test -s nginxdemo
+molecule test -s demo
 
 # Development workflow
-molecule converge -s nginxdemo
-molecule verify -s nginxdemo
+molecule converge -s demo
+molecule verify -s demo
 ```
 
 ## License

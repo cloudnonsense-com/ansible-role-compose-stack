@@ -23,7 +23,7 @@ provisioner:
     verify: verify.yml
 role_name_check: 1
 scenario:
-  name: nginxdemo
+  name: demo
   test_sequence:
     - destroy
     - syntax

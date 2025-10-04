@@ -23,5 +23,5 @@ services:
         mode: "0644"
 
 networks:
-  - nginxdemo
+  - demo
 ...

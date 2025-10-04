@@ -3,11 +3,11 @@
   hosts: all
   gather_facts: False
   tasks:
-    - name: Create Docker networks for nginxdemo stack
+    - name: Create Docker networks for demo stack
       community.docker.docker_network:
         name: "{{ item }}"
         driver: bridge
         state: present
       loop:
-        - nginxdemo
+        - demo
 ...
