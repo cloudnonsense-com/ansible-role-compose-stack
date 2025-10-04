@@ -1,13 +1,13 @@
 {# includes/configs.j2 #}
 {% set has_configs = namespace(found=false) %}
-{% for svc_name, svc_data in services.items() %}
+{% for svc_data in services %}
 {% if svc_data.configs is defined and svc_data.configs | length > 0 %}
 {% set has_configs.found = true %}
 {% endif %}
 {% endfor %}
 {% if has_configs.found %}
 configs:
-{% for svc_name, svc_data in services.items() %}
+{% for svc_data in services %}
 {% if svc_data.configs is defined and svc_data.configs | length > 0 %}
 {% for config in svc_data.configs %}
   "{{ config.source }}":

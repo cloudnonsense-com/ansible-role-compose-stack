@@ -3,8 +3,7 @@ stack_meta:
   has_user_vars: false
 
 services:
-  nginxdemo:
-    container_name: "nginxdemo"
+  - name: "{{ stack.name }}-nginx"
     image: "ubuntu/nginx:latest"
     restart: "unless-stopped"
 

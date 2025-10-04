@@ -1,8 +1,8 @@
-{# Universal compose.yml template - iterates over services dictionary #}
+{# Universal compose.yml template - iterates over services list #}
 ---
 services:
-{% for svc_name, svc_data in services.items() %}
-  {{ svc_name }}:
+{% for svc_data in services %}
+  {{ svc_data.name }}:
 {% include "includes/service_common.j2" %}
 {% include "includes/service_logging.j2" %}
 {% include "includes/service_ports.j2" %}

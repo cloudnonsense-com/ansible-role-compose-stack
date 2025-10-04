@@ -4,13 +4,13 @@
 {# --- BEGIN: TRAEFIK-SPECIFIC LABELS --- #}
 {% if svc_data.labels.traefik is defined and svc_data.labels.traefik.enabled and svc_data.labels.traefik.pattern == "default" %}
       - "traefik.enable=true"
-      - "traefik.http.routers.{{ svc_name }}-http.rule=Host(`{{ svc_name }}.{{ stack.domain }}`)"
-      - "traefik.http.routers.{{ svc_name }}-http.entrypoints=http"
-      - "traefik.http.middlewares.{{ svc_name }}-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.{{ svc_name }}-http.middlewares={{ svc_name }}-https-redirect"
-      - "traefik.http.routers.{{ svc_name }}-https.rule=Host(`{{ svc_name }}.{{ stack.domain }}`)"
-      - "traefik.http.routers.{{ svc_name }}-https.entrypoints=https"
-      - "traefik.http.routers.{{ svc_name }}-https.tls=true"
+      - "traefik.http.routers.{{ svc_data.name }}-http.rule=Host(`{{ svc_data.name }}.{{ stack.domain }}`)"
+      - "traefik.http.routers.{{ svc_data.name }}-http.entrypoints=http"
+      - "traefik.http.middlewares.{{ svc_data.name }}-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.{{ svc_data.name }}-http.middlewares={{ svc_data.name }}-https-redirect"
+      - "traefik.http.routers.{{ svc_data.name }}-https.rule=Host(`{{ svc_data.name }}.{{ stack.domain }}`)"
+      - "traefik.http.routers.{{ svc_data.name }}-https.entrypoints=https"
+      - "traefik.http.routers.{{ svc_data.name }}-https.tls=true"
 {% endif %}
 {# --- END:   TRAEFIK-SPECIFIC LABELS --- #}
 {# --- BEGIN: RAW LABELS --- #}

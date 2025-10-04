@@ -22,12 +22,12 @@ The role uses a two-layer configuration pattern:
 1. **Core Stack Config** (`defaults/main.yml`) - Defines individual `compose_stack_*` variables which are automatically composed into a `stack` dictionary (in `vars/main.yml`) for internal use
 2. **Per-Stack Definitions** (`vars/{{ stack.type }}.yml`) - Opinionated, pre-configured stack definitions with hardcoded settings for `services`, `networks`, `volumes`, `commands`, `environment`, and all other compose-related configuration. These are NOT user-modifiable and represent the canonical "as-is" configuration for each stack.
 
-The **universal template** at `templates/compose.yml.j2` iterates over the `services` dictionary and uses modular includes from `templates/includes/` for reusable blocks (service_common, service_logging, service_ports, service_labels, service_networks, service_configs, networks, configs).
+The **universal template** at `templates/compose.yml.j2` iterates over the `services` list and uses modular includes from `templates/includes/` for reusable blocks (service_common, service_logging, service_ports, service_labels, service_networks, service_configs, networks, configs).
 
 **Template Pattern**: The main template uses a for loop to iterate over all services:
 ```jinja2
-{% for svc_name, svc_data in services.items() %}
-  {{ svc_name }}:
+{% for svc_data in services %}
+  {{ svc_data.name }}:
 {% include "includes/service_common.j2" %}
 {% include "includes/service_logging.j2" %}
 {% include "includes/service_ports.j2" %}
@@ -39,7 +39,7 @@ The **universal template** at `templates/compose.yml.j2` iterates over the `serv
 {% include "includes/configs.j2" %}
 ```
 
-The include templates access service properties through the loop variables `svc_name` and `svc_data`.
+The include templates access service properties through the loop variable `svc_data`. The service name is accessed via `svc_data.name`.
 
 ### Task Organization
 
@@ -115,7 +115,7 @@ The verify.yml playbook tests:
 1. Create `vars/{{ stack_type }}.yml` with opinionated, static configuration:
    - `stack_meta` dictionary with `has_user_vars: false` flag (set to `true` if step 2 applies)
    - `networks` list - Networks required by this stack (must be created externally)
-   - `services` dictionary - Container configurations with keys matching service names
+   - `services` list - Container configurations with `name` field using pattern `{{ stack.name }}-<service>` (e.g., `{{ stack.name }}-nginx`)
    - All hardcoded settings: volumes, commands, environment variables, etc.
 2. (Optional) If minimal user configuration is needed:
    - Set `stack_meta.has_user_vars: true` in `vars/{{ stack_type }}.yml`
@@ -157,8 +157,8 @@ When adding new stack variables:
 
 ### Modifying Templates
 
-- **Universal template**: `templates/compose.yml.j2` - Iterates over all services using `{% for svc_name, svc_data in services.items() %}`
-- **Reusable includes**: `templates/includes/*.j2` - Common service configuration blocks that reference loop variables
+- **Universal template**: `templates/compose.yml.j2` - Iterates over all services using `{% for svc_data in services %}`
+- **Reusable includes**: `templates/includes/*.j2` - Common service configuration blocks that reference `svc_data` variable
 - **Stack-specific assets**: `templates/{{ stack_type }}/` - For custom config files, static assets, etc. (not compose templates)
 
 ## Key Variables
@@ -185,7 +185,10 @@ The role automatically builds a `stack` dictionary from these individual variabl
 **Auto-Loaded from Per-Stack Definitions** (`vars/{{ compose_stack_type }}.yml`):
 - `stack_meta` dictionary:
   - `has_user_vars` (boolean) - Controls auto-loading of `defaults/{{ compose_stack_type }}.yml`
-- `services` dictionary - Pre-configured container definitions
+- `services` list - Pre-configured container definitions, each with:
+  - `name` field using `{{ stack.name }}-<service>` pattern for dynamic service naming
+  - Service-specific settings (image, restart, ports, labels, etc.)
+  - Note: `container_name` is auto-set to match `name` in templates
 - `networks` list - Networks required by the stack (must be created externally before deploying the stack)
 - All stack-specific compose configuration (volumes, commands, environment, etc.)
 
