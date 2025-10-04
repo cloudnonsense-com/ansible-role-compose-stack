@@ -1,0 +1,45 @@
+# Code review reports
+codereports/
+
+# Molecule
+.molecule/
+molecule_parallel/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Ansible
+*.retry
+.ansible/
+
+# Testing
+.cache/
+.pytest_cache/
+htmlcov/
+.coverage
+.tox/
+
+# Logs
+*.log

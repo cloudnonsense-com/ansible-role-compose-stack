@@ -12,6 +12,7 @@ stack:
   dst_dir: "{{ compose_stack_dst_dir }}"
   file:
     owner: "{{ compose_stack_file_owner }}"
+    group: "{{ compose_stack_file_group }}"
     mode: "{{ compose_stack_file_mode }}"
   dir:
     mode: "{{ compose_stack_dir_mode }}"

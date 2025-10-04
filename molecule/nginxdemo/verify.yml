@@ -26,7 +26,6 @@
     - name: Verify nginx content
       ansible.builtin.assert:
         that:
-          # - '"ansible role" in nginx_response.content'
           - nginx_response.content is search('deployed by the.*compose-stack.*ansible role')
         fail_msg: "Nginx content verification failed! Expected string not found."
         success_msg: "Nginx is serving the expected content."

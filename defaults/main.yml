@@ -10,6 +10,7 @@ compose_stack_src_file: "compose.yml.j2"
 compose_stack_dst_dir: "{{ compose_stack_base_dir }}/{{ compose_stack_name }}"
 
 compose_stack_file_owner: "root"
+compose_stack_file_group: "root"
 compose_stack_file_mode: "0644"
 compose_stack_dir_mode: "0755"
 
