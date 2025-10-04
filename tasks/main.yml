@@ -3,7 +3,11 @@
 - include_tasks: validate.yml
 
 - ansible.builtin.include_vars:
+    file: "{{ stack.name }}.yml"
+
+- ansible.builtin.include_vars:
     file: "{{ role_path }}/defaults/{{ stack.name }}.yml"
+  when: stack_meta.has_user_vars | default(false)
 
 - include_tasks: create.yml
   when: stack.state == "present"

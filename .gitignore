@@ -1,5 +1,5 @@
-# Code review reports
-codereports/
+# ignore dir
+.ignore/
 
 # Molecule
 .molecule/

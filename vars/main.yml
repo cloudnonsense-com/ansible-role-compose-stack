@@ -1,6 +1,9 @@
 ---
 # vars file for ansible-role-compose-stack
 
+compose_stack_src_file: "compose.yml.j2"
+compose_stack_dst_dir: "{{ compose_stack_base_dir }}/{{ compose_stack_name }}"
+
 # Computed dict (for internal use and backward compatibility)
 # This is automatically built from the individual variables in defaults/main.yml
 stack:
