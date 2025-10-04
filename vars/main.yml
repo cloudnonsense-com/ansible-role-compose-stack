@@ -12,6 +12,7 @@ stack:
   state: "{{ compose_stack_state }}"
   domain: "{{ compose_stack_domain }}"
   base_dir: "{{ compose_stack_base_dir }}"
+  restart: "{{ compose_stack_restart_policy }}"
   src_file: "{{ compose_stack_src_file }}"
   dst_dir: "{{ compose_stack_dst_dir }}"
   file:

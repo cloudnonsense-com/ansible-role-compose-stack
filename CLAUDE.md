@@ -173,6 +173,7 @@ Users configure the role using individual `compose_stack_*` variables:
 **Optional Configuration**:
 - `compose_stack_domain` - Domain name for the stack (default: "")
 - `compose_stack_base_dir` - Base directory (default: "/opt/apps")
+- `compose_stack_restart_policy` - Restart policy for all containers (default: "always")
 - `compose_stack_file_owner` - File ownership (default: "root")
 - `compose_stack_file_mode` - File permissions (default: "0644")
 - `compose_stack_dir_mode` - Directory permissions (default: "0755")
@@ -180,15 +181,16 @@ Users configure the role using individual `compose_stack_*` variables:
 - `compose_stack_destroy_remove_images` - Remove images on destroy: "all" or "local" (default: "local")
 
 **Internal Implementation**:
-The role automatically builds a `stack` dictionary from these individual variables in `vars/main.yml`. This internal dict is what tasks and templates reference (e.g., `{{ stack.type }}`, `{{ stack.name }}`, `{{ stack.domain }}`). Users never need to construct this dict manually.
+The role automatically builds a `stack` dictionary from these individual variables in `vars/main.yml`. This internal dict is what tasks and templates reference (e.g., `{{ stack.type }}`, `{{ stack.name }}`, `{{ stack.domain }}`, `{{ stack.restart }}`). Users never need to construct this dict manually.
 
 **Auto-Loaded from Per-Stack Definitions** (`vars/{{ compose_stack_type }}.yml`):
 - `stack_meta` dictionary:
   - `has_user_vars` (boolean) - Controls auto-loading of `defaults/{{ compose_stack_type }}.yml`
 - `services` list - Pre-configured container definitions, each with:
   - `name` field using `{{ stack.name }}-<service>` pattern for dynamic service naming
-  - Service-specific settings (image, restart, ports, labels, etc.)
+  - Service-specific settings (image, ports, labels, etc.)
   - Note: `container_name` is auto-set to match `name` in templates
+  - Note: `restart` policy is set globally via `compose_stack_restart_policy` (default: "always")
 - `networks` list - Networks required by the stack (must be created externally before deploying the stack)
 - All stack-specific compose configuration (volumes, commands, environment, etc.)
 

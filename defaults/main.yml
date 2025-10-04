@@ -7,6 +7,7 @@ compose_stack_state: "present"
 compose_stack_domain: ""
 
 compose_stack_base_dir: "/opt/apps"
+compose_stack_restart_policy: "always"
 
 compose_stack_file_owner: "root"
 compose_stack_file_group: "root"
