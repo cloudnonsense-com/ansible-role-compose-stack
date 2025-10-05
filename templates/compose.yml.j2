@@ -8,9 +8,11 @@ services:
 {% include "includes/service_ports.j2" %}
 {% include "includes/service_labels.j2" %}
 {% include "includes/service_networks.j2" %}
+{% include "includes/service_volumes.j2" %}
 {% include "includes/service_configs.j2" %}
 
 {% endfor %}
 {% include "includes/networks.j2" %}
+{% include "includes/volumes.j2" %}
 {% include "includes/configs.j2" %}
 ...

@@ -1,0 +1,9 @@
+{# includes/volumes.j2 #}
+{% set all_volumes = services | selectattr('volumes', 'defined') | map(attribute='volumes') | flatten | map('regex_replace', '^([^:]+):.*$', '\\1') | unique | list %}
+{% if all_volumes | length > 0 %}
+volumes:
+{% for volume in all_volumes %}
+  {{ volume }}: {}
+{% endfor %}
+{% endif %}
+{# end #}
