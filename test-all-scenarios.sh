@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Start timing
+START_TIME=$(date +%s)
+
 # Activate virtual environment
 source ~/.venv_cnns/bin/activate
 
@@ -23,4 +26,10 @@ for scenario in $scenarios; do
   echo ""
 done
 
+END_TIME=$(date +%s)
+ELAPSED=$((END_TIME - START_TIME))
+MINUTES=$((ELAPSED / 60))
+SECONDS=$((ELAPSED % 60))
+
 echo "All scenario '$MOLECULE_CMD' commands completed successfully!"
+echo "Total execution time: ${MINUTES}m ${SECONDS}s"
