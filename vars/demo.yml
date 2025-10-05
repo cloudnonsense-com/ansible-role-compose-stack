@@ -6,6 +6,13 @@ services:
     ports:
       - "37000:80"
 
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80 || exit 1"]
+      interval: "30s"
+      timeout: "10s"
+      retries: 3
+      start_period: "10s"
+
     labels:
       traefik:
         enabled: true

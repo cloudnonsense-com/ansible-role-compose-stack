@@ -4,6 +4,12 @@ services:
     image: "grafana/grafana-oss:11.5.1"
     ports:
       - "37011:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: "30s"
+      timeout: "10s"
+      retries: 3
+      start_period: "40s"
     labels:
       traefik:
         enabled: true
@@ -18,6 +24,12 @@ services:
     image: "influxdb:1.8.3"
     ports:
       - "37012:8086"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8086/health || exit 1"]
+      interval: "30s"
+      timeout: "10s"
+      retries: 3
+      start_period: "20s"
     volumes:
       - "influxdb-data:/var/influxdb/data"
 ...

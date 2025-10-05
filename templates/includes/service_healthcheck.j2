@@ -1,0 +1,18 @@
+{# includes/service_healthcheck.j2 #}
+{% if svc_data.healthcheck is defined %}
+    healthcheck:
+      test: {{ svc_data.healthcheck.test }}
+{% if svc_data.healthcheck.interval is defined %}
+      interval: "{{ svc_data.healthcheck.interval }}"
+{% endif %}
+{% if svc_data.healthcheck.timeout is defined %}
+      timeout: "{{ svc_data.healthcheck.timeout }}"
+{% endif %}
+{% if svc_data.healthcheck.retries is defined %}
+      retries: {{ svc_data.healthcheck.retries }}
+{% endif %}
+{% if svc_data.healthcheck.start_period is defined %}
+      start_period: "{{ svc_data.healthcheck.start_period }}"
+{% endif %}
+{% endif %}
+{# end #}
