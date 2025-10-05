@@ -8,7 +8,7 @@
     # Nginx-demo tests
     - name: Check nginx HTTP response
       ansible.builtin.uri:
-        url: "http://host.docker.internal:37080"
+        url: "http://host.docker.internal:37000"
         return_content: true
       register: nginx_response
 

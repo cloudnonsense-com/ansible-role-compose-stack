@@ -7,7 +7,7 @@
     # Grafana tests
     - name: Check Grafana HTTP response
       ansible.builtin.uri:
-        url: "http://host.docker.internal:37005"
+        url: "http://host.docker.internal:37011"
         status_code: [200, 302]  # Grafana may redirect to login
       register: grafana_response
 
@@ -21,7 +21,7 @@
     # InfluxDB tests
     - name: Check InfluxDB HTTP response
       ansible.builtin.uri:
-        url: "http://host.docker.internal:8086/health"
+        url: "http://host.docker.internal:37012/health"
         status_code: [200]
       register: influxdb_response
 

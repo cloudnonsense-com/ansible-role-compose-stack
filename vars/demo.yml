@@ -4,7 +4,7 @@ services:
     image: "ubuntu/nginx:latest"
 
     ports:
-      - "37080:80"
+      - "37000:80"
 
     labels:
       traefik:

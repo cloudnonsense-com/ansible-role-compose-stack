@@ -3,7 +3,7 @@ services:
   - name: "{{ stack.name }}-grafana"
     image: "grafana/grafana-oss:11.5.1"
     ports:
-      - "37005:3000"
+      - "37011:3000"
     labels:
       traefik:
         enabled: true
@@ -15,7 +15,7 @@ services:
   - name: "{{ stack.name }}-influxdb"
     image: "influxdb:1.8.3"
     ports:
-      - "8086:8086"
+      - "37012:8086"
     volumes:
       - "influxdb-data:/var/influxdb/data"
 ...
