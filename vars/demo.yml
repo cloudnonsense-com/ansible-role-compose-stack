@@ -1,7 +1,4 @@
 ---
-stack_meta:
-  has_user_vars: false
-
 services:
   - name: "{{ stack.name }}-nginx"
     image: "ubuntu/nginx:latest"
