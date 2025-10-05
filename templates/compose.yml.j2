@@ -5,6 +5,7 @@ services:
 {% set container_name = stack.name ~ "-" ~ svc_data.name %}
   {{ container_name }}:
 {% include "includes/service_common.j2" %}
+{% include "includes/service_depends.j2" %}
 {% include "includes/service_logging.j2" %}
 {% include "includes/service_ports.j2" %}
 {% include "includes/service_labels.j2" %}

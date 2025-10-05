@@ -31,17 +31,17 @@
         success_msg: "Nginx is serving the expected content."
 
     # Docker network tests
-    - name: Check demo network exists
-      ansible.builtin.command: docker network inspect demo
+    - name: Check demo-dev network exists
+      ansible.builtin.command: docker network inspect demo-dev
       register: nginx_network
       changed_when: false
 
-    - name: Verify demo network exists
+    - name: Verify demo-dev network exists
       ansible.builtin.assert:
         that:
           - nginx_network.rc == 0
-        fail_msg: "demo network does not exist"
-        success_msg: "demo network exists"
+        fail_msg: "demo-dev network does not exist"
+        success_msg: "demo-dev network exists"
 
     # Docker compose stack tests
     - name: Check demo-dev compose stack status

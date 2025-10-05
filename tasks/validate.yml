@@ -23,6 +23,17 @@
     fail_msg: "Missing or invalid core stack variables. Required: stack.type, stack.name, stack.state (present|absent), stack.dst_dir"
     quiet: true
 
+- name: Check stack type vars file exists
+  ansible.builtin.stat:
+    path: "{{ role_path }}/vars/{{ stack.type }}.yml"
+  register: stack_type_file
+  delegate_to: localhost
+
+- name: Fail if stack type is invalid
+  ansible.builtin.fail:
+    msg: "Invalid stack.type '{{ stack.type }}'. No corresponding vars/{{ stack.type }}.yml found."
+  when: not stack_type_file.stat.exists
+
 - name: Validate variables for state=present
   ansible.builtin.assert:
     that:

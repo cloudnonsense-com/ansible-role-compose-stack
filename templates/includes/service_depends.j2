@@ -1,0 +1,8 @@
+{# includes/service_depends.j2 #}
+{% if svc_data.depends_on is defined and svc_data.depends_on | length > 0 %}
+    depends_on:
+{% for dependency in svc_data.depends_on %}
+      - "{{ stack.name }}-{{ dependency }}"
+{% endfor %}
+{% endif %}
+{# end #}

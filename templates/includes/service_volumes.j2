@@ -2,7 +2,7 @@
 {% if svc_data.volumes is defined and svc_data.volumes | length > 0 %}
     volumes:
 {% for volume in svc_data.volumes %}
-      - {{ volume }}
+      - "{{ volume }}"
 {% endfor %}
 {% endif %}
 {# end #}

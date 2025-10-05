@@ -18,11 +18,15 @@ echo "Running molecule command: $MOLECULE_CMD"
 echo ""
 
 # Run molecule command for each scenario
+FAILED=0
 for scenario in $scenarios; do
   echo "=========================================="
   echo "Running 'molecule $MOLECULE_CMD' for scenario: $scenario"
   echo "=========================================="
-  molecule "$MOLECULE_CMD" -s "$scenario"
+  if ! molecule "$MOLECULE_CMD" -s "$scenario"; then
+    FAILED=1
+    break
+  fi
   echo ""
 done
 
@@ -31,5 +35,41 @@ ELAPSED=$((END_TIME - START_TIME))
 MINUTES=$((ELAPSED / 60))
 SECONDS=$((ELAPSED % 60))
 
-echo "All scenario '$MOLECULE_CMD' commands completed successfully!"
-echo "Total execution time: ${MINUTES}m ${SECONDS}s"
+echo ""
+echo ""
+
+if [ $FAILED -eq 0 ]; then
+  cat <<'EOF'
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║   ███████╗██╗   ██╗ ██████╗ ██████╗███████╗███████╗███████╗       ║
+║   ██╔════╝██║   ██║██╔════╝██╔════╝██╔════╝██╔════╝██╔════╝       ║
+║   ███████╗██║   ██║██║     ██║     █████╗  ███████╗███████╗       ║
+║   ╚════██║██║   ██║██║     ██║     ██╔══╝  ╚════██║╚════██║       ║
+║   ███████║╚██████╔╝╚██████╗╚██████╗███████╗███████║███████║       ║
+║   ╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝╚══════╝╚══════╝╚══════╝       ║
+║                                                                   ║
+║          All scenario tests completed successfully! ✓             ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+EOF
+  echo "Total execution time: ${MINUTES}m ${SECONDS}s"
+  exit 0
+else
+  cat <<'EOF'
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║   ███████╗ █████╗ ██╗██╗     ███████╗██████╗                      ║
+║   ██╔════╝██╔══██╗██║██║     ██╔════╝██╔══██╗                     ║
+║   █████╗  ███████║██║██║     █████╗  ██║  ██║                     ║
+║   ██╔══╝  ██╔══██║██║██║     ██╔══╝  ██║  ██║                     ║
+║   ██║     ██║  ██║██║███████╗███████╗██████╔╝                     ║
+║   ╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═════╝                      ║
+║                                                                   ║
+║              One or more scenario tests failed! ✗                 ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+EOF
+  echo "Total execution time: ${MINUTES}m ${SECONDS}s"
+  exit 1
+fi

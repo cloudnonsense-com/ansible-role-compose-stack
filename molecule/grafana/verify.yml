@@ -33,17 +33,17 @@
         success_msg: "InfluxDB is responding"
 
     # Docker network tests
-    - name: Check grafana network exists
-      ansible.builtin.command: docker network inspect grafana
+    - name: Check grafana-dev network exists
+      ansible.builtin.command: docker network inspect grafana-dev
       register: grafana_network
       changed_when: false
 
-    - name: Verify grafana network exists
+    - name: Verify grafana-dev network exists
       ansible.builtin.assert:
         that:
           - grafana_network.rc == 0
-        fail_msg: "grafana network does not exist"
-        success_msg: "grafana network exists"
+        fail_msg: "grafana-dev network does not exist"
+        success_msg: "grafana-dev network exists"
 
     # Docker compose stack tests
     - name: Check grafana-dev compose stack status

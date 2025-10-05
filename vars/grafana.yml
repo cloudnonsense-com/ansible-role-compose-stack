@@ -11,6 +11,8 @@ services:
       raw: []
     volumes:
       - "grafana-data:/var/lib/grafana"
+    depends_on:
+      - "influxdb"
 
   - name: "influxdb"
     image: "influxdb:1.8.3"
