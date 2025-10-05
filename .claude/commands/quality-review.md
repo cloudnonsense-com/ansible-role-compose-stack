@@ -4,4 +4,4 @@ Perform a code review of this whole codebase. I want to see a list of:
 - Problems & Design Issues;
 - Recommendations; 
 - Overall Assessment (with 1-to-10 quality scoring on Architecture, Testing, Maintainability and Documentation)
-- save the report under "codereports/today's date and time.codereport.md"
+- save the report under ".ignore/<YYYY-MM-DD-HH_MM_SS>-codereport.md"
