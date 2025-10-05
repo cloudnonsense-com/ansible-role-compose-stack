@@ -1,6 +1,6 @@
 ---
 services:
-  - name: "{{ stack.name }}-nginx"
+  - name: "nginx"
     image: "ubuntu/nginx:latest"
 
     ports:

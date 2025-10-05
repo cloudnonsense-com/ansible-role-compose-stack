@@ -1,6 +1,6 @@
 ---
 services:
-  - name: "{{ stack.name }}-grafana"
+  - name: "grafana"
     image: "grafana/grafana-oss:11.5.1"
     ports:
       - "37011:3000"
@@ -12,7 +12,7 @@ services:
     volumes:
       - "grafana-data:/var/lib/grafana"
 
-  - name: "{{ stack.name }}-influxdb"
+  - name: "influxdb"
     image: "influxdb:1.8.3"
     ports:
       - "37012:8086"
