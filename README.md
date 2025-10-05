@@ -1,6 +1,6 @@
 # Ansible Role: compose-stack
 
-Ansible role for managing Docker Compose v2 stacks with opinionated, pre-configured stack definitions. Deploy production-ready compose stacks with minimal configuration.
+Manage Docker Compose v2 stacks with opinionated, pre-configured definitions. Deploy production-ready stacks with minimal configuration.
 
 ## Requirements
 
@@ -24,34 +24,33 @@ ansible-galaxy install cloudnonsense.compose_stack
       vars:
         compose_stack_type: "demo"
         compose_stack_name: "myapp"
-        compose_stack_domain: "example.lan"
         compose_stack_state: "present"
 ```
 
 ## Variables
 
 **Required:**
-- `compose_stack_type` - Stack type to deploy (determines which template/vars to use, e.g., `"demo"`, `"grafana"`)
-- `compose_stack_name` - Deployment instance identifier (allows multiple deployments of same type, e.g., `"grafana-dev"`, `"grafana-prd"`)
+- `compose_stack_type` - Stack type (`"demo"`, `"grafana"`)
+- `compose_stack_name` - Instance identifier (e.g., `"grafana-dev"`, `"grafana-prd"`)
 - `compose_stack_state` - `"present"` or `"absent"`
 
 **Optional:**
 - `compose_stack_domain` - Domain name (default: `""`)
+- `compose_stack_additional_networks` - Additional networks beyond primary (default: `[]`)
 - `compose_stack_base_dir` - Base directory (default: `"/opt/apps"`)
+- `compose_stack_restart_policy` - Restart policy (default: `"always"`)
 - `compose_stack_file_owner` - File owner (default: `"root"`)
 - `compose_stack_file_mode` - File permissions (default: `"0644"`)
 - `compose_stack_dir_mode` - Directory permissions (default: `"0755"`)
 - `compose_stack_destroy_remove_volumes` - Remove volumes on destroy (default: `true`)
-- `compose_stack_destroy_remove_images` - Remove images on destroy: `"all"` or `"local"` (default: `"local"`)
+- `compose_stack_destroy_remove_images` - Remove images: `"all"` or `"local"` (default: `"local"`)
 
-**Available Stacks:**
+## Available Stacks
 
-Each stack comes with pre-configured, opinionated settings. Stacks are consumed "as-is" with minimal user input:
+- `demo` - Basic nginx demo
+- `grafana` - Grafana + InfluxDB monitoring
 
-- `demo` - Basic nginx demo application
-- `grafana` - Grafana + InfluxDB monitoring stack
-
-**Note:** Stack configurations are defined in `vars/{{ compose_stack_type }}.yml` and are not user-modifiable. Some stacks may expose minimal configuration options via `defaults/{{ compose_stack_type }}.yml` when `stack_meta.has_user_vars: true`.
+Stacks are opinionated and consumed "as-is" with minimal user input.
 
 ## Usage Examples
 
@@ -62,9 +61,11 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        compose_stack_type: "demo"
-        compose_stack_name: "demo"
-        compose_stack_domain: "example.lan"
+        compose_stack_type: "grafana"
+        compose_stack_name: "grafana-dev"
+        compose_stack_state: "present"
+        compose_stack_additional_networks:
+          - traefik-prod
 ```
 
 ### Destroy Stack
@@ -74,30 +75,12 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        compose_stack_type: "demo"
-        compose_stack_name: "demo"
+        compose_stack_type: "grafana"
+        compose_stack_name: "grafana-dev"
         compose_stack_state: "absent"
 ```
 
-### Deploy Multiple Stacks
-
-```yaml
-- hosts: docker_hosts
-  roles:
-    - role: cloudnonsense.compose_stack
-      vars:
-        compose_stack_type: "demo"
-        compose_stack_name: "demo"
-        compose_stack_domain: "example.lan"
-
-    - role: cloudnonsense.compose_stack
-      vars:
-        compose_stack_type: "grafana"
-        compose_stack_name: "grafana"
-        compose_stack_domain: "example.lan"
-```
-
-### Deploy Multiple Instances of Same Stack Type
+### Multiple Instances
 
 ```yaml
 - hosts: docker_hosts
@@ -106,41 +89,32 @@ Each stack comes with pre-configured, opinionated settings. Stacks are consumed 
       vars:
         compose_stack_type: "grafana"
         compose_stack_name: "grafana-dev"
-        compose_stack_domain: "dev.example.lan"
 
     - role: cloudnonsense.compose_stack
       vars:
         compose_stack_type: "grafana"
         compose_stack_name: "grafana-prd"
-        compose_stack_domain: "prd.example.lan"
 ```
 
 ## Architecture
 
-The role uses a declarative, template-based approach:
-
-- **Opinionated Stack Definitions** (`vars/{{ compose_stack_type }}.yml`) - Pre-configured services, networks, volumes, and all compose settings
-- **Universal Template** (`templates/compose.yml.j2`) - Renders any stack definition using modular includes
-- **Minimal User Input** - Users specify stack type, instance name, and optional domain; the role handles the rest
-- **External Networks** - Networks must be created externally before deploying stacks
+- **Opinionated Stacks** - Pre-configured in `vars/{{ compose_stack_type }}.yml`
+- **Auto-Generated Networks** - Primary network = stack name, additional via `compose_stack_additional_networks`
+- **External Networks** - All networks must exist before deployment
+- **Universal Template** - `templates/compose.yml.j2` renders all stacks
 
 ## Testing
 
-Molecule tests are organized per-stack with a test-all helper script:
-
 ```bash
-# Test all stacks (using helper script)
+# Test all stacks
 ./test-all-scenarios.sh
 
-# Test all stacks (manual)
-molecule test -s demo && molecule test -s grafana
+# Run specific command on all stacks
+./test-all-scenarios.sh converge
+./test-all-scenarios.sh verify
 
 # Test individual stack
 molecule test -s demo
-
-# Development workflow
-molecule converge -s demo
-molecule verify -s demo
 ```
 
 ## License

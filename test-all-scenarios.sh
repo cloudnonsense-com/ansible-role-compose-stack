@@ -4,19 +4,23 @@ set -euo pipefail
 # Activate virtual environment
 source ~/.venv_cnns/bin/activate
 
+# Get molecule command from first parameter, default to 'test'
+MOLECULE_CMD="${1:-test}"
+
 # Get all scenario directories except 'default'
 scenarios=$(find molecule -mindepth 1 -maxdepth 1 -type d ! -name 'default' -exec basename {} \;)
 
 echo "Found scenarios: $scenarios"
+echo "Running molecule command: $MOLECULE_CMD"
 echo ""
 
-# Run molecule test for each scenario
+# Run molecule command for each scenario
 for scenario in $scenarios; do
   echo "=========================================="
-  echo "Testing scenario: $scenario"
+  echo "Running 'molecule $MOLECULE_CMD' for scenario: $scenario"
   echo "=========================================="
-  molecule test -s "$scenario"
+  molecule "$MOLECULE_CMD" -s "$scenario"
   echo ""
 done
 
-echo "All scenario tests completed successfully!"
+echo "All scenario '$MOLECULE_CMD' commands completed successfully!"

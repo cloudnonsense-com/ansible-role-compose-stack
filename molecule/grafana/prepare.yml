@@ -9,5 +9,6 @@
         driver: bridge
         state: present
       loop:
-        - grafana
+        - grafana-dev
+        - traefik-dev
 ...

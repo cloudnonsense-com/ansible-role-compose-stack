@@ -5,6 +5,7 @@ compose_stack_type: ""
 compose_stack_name: ""
 compose_stack_state: "present"
 compose_stack_domain: ""
+compose_stack_additional_networks: []
 
 compose_stack_base_dir: "/opt/apps"
 compose_stack_restart_policy: "always"

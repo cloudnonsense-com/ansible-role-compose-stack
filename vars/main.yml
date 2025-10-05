@@ -11,6 +11,7 @@ stack:
   name: "{{ compose_stack_name }}"
   state: "{{ compose_stack_state }}"
   domain: "{{ compose_stack_domain }}"
+  additional_networks: "{{ compose_stack_additional_networks }}"
   base_dir: "{{ compose_stack_base_dir }}"
   restart: "{{ compose_stack_restart_policy }}"
   src_file: "{{ compose_stack_src_file }}"

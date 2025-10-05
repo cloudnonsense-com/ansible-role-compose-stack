@@ -21,7 +21,4 @@ services:
         uid: "33"
         gid: "33"
         mode: "0644"
-
-networks:
-  - demo
 ...

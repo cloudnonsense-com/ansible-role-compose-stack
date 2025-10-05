@@ -9,4 +9,6 @@
         compose_stack_name: "grafana-dev"
         compose_stack_domain: "example.lan"
         compose_stack_state: "present"
+        compose_stack_additional_networks:
+          - traefik-dev
 ...

@@ -9,5 +9,6 @@
         driver: bridge
         state: present
       loop:
-        - demo
+        - demo-dev
+        - traefik-dev
 ...
