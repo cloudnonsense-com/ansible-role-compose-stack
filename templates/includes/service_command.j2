@@ -1,0 +1,12 @@
+{# includes/service_command.j2 #}
+{% if svc_data.command is defined %}
+{% if svc_data.command is string %}
+    command: "{{ svc_data.command }}"
+{% else %}
+    command:
+{% for cmd in svc_data.command %}
+      - "{{ cmd }}"
+{% endfor %}
+{% endif %}
+{% endif %}
+{# end #}

@@ -1,0 +1,14 @@
+{# includes/service_environment.j2 #}
+{% if svc_data.environment is defined %}
+    environment:
+{% if svc_data.environment is mapping %}
+{% for key, value in svc_data.environment.items() %}
+      {{ key }}: "{{ value }}"
+{% endfor %}
+{% else %}
+{% for env in svc_data.environment %}
+      - "{{ env }}"
+{% endfor %}
+{% endif %}
+{% endif %}
+{# end #}
