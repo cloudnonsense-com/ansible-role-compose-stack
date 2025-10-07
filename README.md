@@ -12,7 +12,7 @@ Ansible ≥ 2.12, Docker Engine + Compose v2, `community.docker` collection, Pyt
 ansible-galaxy install cloudnonsense.compose_stack
 ```
 
-## Quick Start
+## Usage
 
 ```yaml
 - hosts: docker_hosts
@@ -24,34 +24,30 @@ ansible-galaxy install cloudnonsense.compose_stack
         compose_stack_state: "present"
 ```
 
-## Variables
+**Required vars:** `compose_stack_type`, `compose_stack_name`, `compose_stack_state` (`present`/`absent`)
 
-**Required:** `compose_stack_type`, `compose_stack_name`, `compose_stack_state` (`"present"`/`"absent"`)
+**Optional:** `compose_stack_domain`, `compose_stack_additional_networks`, `compose_stack_base_dir`, `compose_stack_restart_policy`, `compose_stack_config`
 
-**Optional:** `compose_stack_domain`, `compose_stack_additional_networks`, `compose_stack_base_dir`, `compose_stack_restart_policy`, file/dir ownership/permissions, destroy options
+## Stacks
 
-## Available Stacks
+**`demo`** - Nginx (no required config)
 
-- `demo` - nginx
-- `grafana` - Grafana + InfluxDB
+**`grafana`** - Grafana + InfluxDB + Telegraf + Prometheus
+```yaml
+compose_stack_config:
+  influxdb: {database: "monitoring", admin_user: "admin", admin_password: "pass"}
+  grafana: {admin_user: "admin", admin_password: "pass"}
+```
 
-## Architecture
+## Per-Service Overrides
 
-- Opinionated service definitions in `vars/{{ type }}.yml`
-- Auto-generated networks: primary = stack name, additional via `compose_stack_additional_networks` (must exist externally)
-- Universal template `templates/compose.yml.j2` renders all stacks
-
-## Testing
-
-```bash
-./test-all-scenarios.sh [converge|verify]  # All stacks
-molecule test -s demo                       # Individual
+```yaml
+compose_stack_config:
+  <service>:
+    image: "custom/image:tag"    # Override default image
+    restart: "on-failure"        # Override restart policy
 ```
 
 ## License
 
-MIT
-
-## Author
-
-[CloudNonsense.com](https://cloudnonsense.com)
+MIT | [CloudNonsense.com](https://cloudnonsense.com)
