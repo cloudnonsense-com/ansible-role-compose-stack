@@ -11,4 +11,12 @@
         compose_stack_state: "present"
         compose_stack_additional_networks:
           - traefik-dev
+        compose_stack_config:
+          influxdb:
+            database: "monitoring"
+            admin_user: "admin"
+            admin_password: "test_password"
+          grafana:
+            admin_user: "admin"
+            admin_password: "test_password"
 ...

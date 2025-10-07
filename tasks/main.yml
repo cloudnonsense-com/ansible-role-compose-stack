@@ -5,6 +5,10 @@
 - ansible.builtin.include_vars:
     file: "{{ stack.type }}.yml"
 
+- name: Include stack-specific validation
+  include_tasks: "validate-{{ stack.type }}.yml"
+  when: lookup('first_found', dict(files=['validate-' + stack.type + '.yml'], paths=[role_path + '/tasks'], skip=true)) != ''
+
 - include_tasks: create.yml
   when: stack.state == "present"
 

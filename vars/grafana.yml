@@ -10,15 +10,33 @@ services:
       timeout: "10s"
       retries: 3
       start_period: "40s"
+    environment:
+      GF_SECURITY_ADMIN_USER: "{{ compose_stack_config.grafana.admin_user }}"
+      GF_SECURITY_ADMIN_PASSWORD: "{{ compose_stack_config.grafana.admin_password }}"
     labels:
       traefik:
         enabled: true
         pattern: "default"
       raw: []
+    configs:
+      - source: "datasources.yaml"
+        target: "/etc/grafana/provisioning/datasources/datasources.yaml"
+        mode: "0644"
+      - source: "dashboard-provider.yaml"
+        target: "/etc/grafana/provisioning/dashboards/default.yaml"
+        mode: "0644"
+      - source: "dashboard-isp-checker.json"
+        target: "/etc/grafana/provisioning/dashboards/isp-checker.json"
+        mode: "0644"
+      - source: "dashboard-prometheus-windowsexporter.json"
+        target: "/etc/grafana/provisioning/dashboards/prometheus-windowsexporter.json"
+        mode: "0644"
     volumes:
       - "grafana-data:/var/lib/grafana"
     depends_on:
       - "influxdb"
+      - "prometheus"
+      - "telegraf"
 
   - name: "influxdb"
     image: "influxdb:1.8.3"
@@ -30,6 +48,51 @@ services:
       timeout: "10s"
       retries: 3
       start_period: "20s"
+    environment:
+      INFLUXDB_DB: "{{ compose_stack_config.influxdb.database }}"
+      INFLUXDB_ADMIN_USER: "{{ compose_stack_config.influxdb.admin_user }}"
+      INFLUXDB_ADMIN_PASSWORD: "{{ compose_stack_config.influxdb.admin_password }}"
     volumes:
       - "influxdb-data:/var/influxdb/data"
+
+  - name: "telegraf"
+    image: "telegraf:1.33"
+    healthcheck:
+      test: ["CMD-SHELL", "telegraf --test --config /etc/telegraf/telegraf.conf 2>&1 | grep -q 'inputs' || exit 1"]
+      interval: "30s"
+      timeout: "10s"
+      retries: 3
+      start_period: "30s"
+    configs:
+      - source: "telegraf.conf"
+        target: "/etc/telegraf/telegraf.conf"
+        mode: "0644"
+    depends_on:
+      - "influxdb"
+
+  - name: "prometheus"
+    image: "prom/prometheus:v2.46.0"
+    ports:
+      - "37013:9090"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9090/-/healthy || exit 1"]
+      interval: "30s"
+      timeout: "10s"
+      retries: 3
+      start_period: "30s"
+    labels:
+      traefik:
+        enabled: true
+        pattern: "default"
+      raw: []
+    configs:
+      - source: "prometheus.yml"
+        target: "/etc/prometheus/prometheus.yml"
+        mode: "0644"
+    volumes:
+      - "prometheus:/prometheus"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
 ...

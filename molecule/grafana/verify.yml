@@ -32,6 +32,20 @@
         fail_msg: "InfluxDB did not return HTTP 200"
         success_msg: "InfluxDB is responding"
 
+    # Prometheus tests
+    - name: Check Prometheus HTTP response
+      ansible.builtin.uri:
+        url: "http://host.docker.internal:37013/-/healthy"
+        status_code: [200]
+      register: prometheus_response
+
+    - name: Verify Prometheus is responding
+      ansible.builtin.assert:
+        that:
+          - prometheus_response.status == 200
+        fail_msg: "Prometheus did not return HTTP 200"
+        success_msg: "Prometheus is responding"
+
     # Docker network tests
     - name: Check grafana-dev network exists
       ansible.builtin.command: docker network inspect grafana-dev
@@ -56,6 +70,8 @@
         that:
           - "'grafana' in grafana_stack.stdout"
           - "'influxdb' in grafana_stack.stdout"
+          - "'telegraf' in grafana_stack.stdout"
+          - "'prometheus' in grafana_stack.stdout"
         fail_msg: "grafana-dev stack is not running properly"
         success_msg: "grafana-dev stack is running"
 ...

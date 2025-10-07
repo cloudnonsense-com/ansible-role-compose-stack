@@ -8,6 +8,14 @@
         compose_stack_type: "grafana"
         compose_stack_name: "grafana-dev"
         compose_stack_state: "absent"
+        compose_stack_config:
+          influxdb:
+            database: "monitoring"
+            admin_user: "admin"
+            admin_password: "test_password"
+          grafana:
+            admin_user: "admin"
+            admin_password: "test_password"
   post_tasks:
     - name: Remove all unnamed (dangling) Docker volumes
       ansible.builtin.command: docker volume prune -f

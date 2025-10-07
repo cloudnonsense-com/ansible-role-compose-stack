@@ -1,0 +1,93 @@
+[global_tags]
+[agent]
+  interval = "10s"
+  round_interval = true
+  metric_batch_size = 1000
+  metric_buffer_limit = 10000
+  collection_jitter = "0s"
+  flush_interval = "10s"
+  flush_jitter = "0s"
+  precision = ""
+  hostname = ""
+  omit_hostname = false
+  debug = false
+
+[[outputs.influxdb]]
+  urls = ["http://{{ stack.name }}-influxdb:8086"]
+  database = "{{ compose_stack_config.influxdb.database }}"
+  timeout = "60s"
+  username = "{{ compose_stack_config.influxdb.admin_user }}"
+  password = "{{ compose_stack_config.influxdb.admin_password }}"
+  user_agent = "telegraf"
+  skip_database_creation = false
+
+# [[inputs.net]]
+# [[inputs.netstat]]
+# [[inputs.diskio]]
+# [[inputs.kernel]]
+# [[inputs.linux_sysctl_fs]]
+# [[inputs.mem]]
+# [[inputs.processes]]
+# [[inputs.swap]]
+# [[inputs.system]]
+
+# [[inputs.cpu]]
+#   percpu = true
+#   totalcpu = true
+#   collect_cpu_time = false
+#   report_active = false
+
+# [[inputs.disk]]
+#   ignore_fs = ["tmpfs",
+#             "devtmpfs",
+#             "devfs",
+#             "iso9660",
+#             "overlay",
+#             "aufs",
+#             "squashfs"
+#   ]
+
+[[inputs.dns_query]]
+  servers = ["192.168.1.1"]
+  domains = [
+    "google.com",
+    "hp.com",
+    "dell.com",
+    "github.com",
+    "app.terraform.io",
+    "dropbox.com"
+  ]
+  record_type = "A"
+  port = 53
+  timeout = 3
+
+[[inputs.http_response]]
+  urls = [
+    "http://www.google.com",
+    "https://hp.com",
+    "https://dell.com",
+    "https://github.com",
+    "https://app.terraform.io",
+    "https://dropbox.com"
+  ]
+  response_timeout = "5s"
+  method = "GET"
+  follow_redirects = true
+
+# [[inputs.internal]]
+#   collect_memstats = true
+
+[[inputs.ping]]
+  urls = [
+    "1.1.1.1",
+    "8.8.8.8",
+    "194.168.4.100",
+    "194.168.8.100"
+  ]
+  method = "exec"
+  count = 1
+  ping_interval = 1.0
+  timeout = 5.0
+  deadline = 10
+  binary = "ping"
+  ipv6 = false

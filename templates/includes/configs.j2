@@ -5,7 +5,13 @@ configs:
 {% for config in all_configs %}
   "{{ config.source }}":
     content: |
-      {{ lookup('template', role_path ~ '/templates/' ~ stack.type ~ '/' ~ config.source ~ '.j2') | indent(6) }}
+{% set template_path = role_path ~ '/templates/' ~ stack.type ~ '/' ~ config.source ~ '.j2' %}
+{% set raw_path = role_path ~ '/templates/' ~ stack.type ~ '/' ~ config.source %}
+{% if template_path is file %}
+      {{ lookup('template', template_path) | replace('$', '$$') | indent(6) }}
+{% else %}
+      {{ lookup('file', raw_path) | replace('$', '$$') | indent(6) }}
+{% endif %}
 {% endfor %}
 {% endif %}
 {# end #}

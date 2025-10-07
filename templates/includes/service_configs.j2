@@ -4,8 +4,12 @@
 {% for config in svc_data.configs %}
       - source: "{{ config.source }}"
         target: "{{ config.target }}"
+{% if config.uid is defined %}
         uid: "{{ config.uid }}"
+{% endif %}
+{% if config.gid is defined %}
         gid: "{{ config.gid }}"
+{% endif %}
         mode: "{{ config.mode }}"
 {% endfor %}
 {% endif %}

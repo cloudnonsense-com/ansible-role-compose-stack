@@ -1,0 +1,40 @@
+---
+# Stack-specific validation for grafana stack
+
+- name: Validate grafana stack config - influxdb settings
+  ansible.builtin.assert:
+    that:
+      - compose_stack_config.influxdb is defined
+      - compose_stack_config.influxdb.database is defined
+      - compose_stack_config.influxdb.database | length > 0
+      - compose_stack_config.influxdb.admin_user is defined
+      - compose_stack_config.influxdb.admin_user | length > 0
+      - compose_stack_config.influxdb.admin_password is defined
+      - compose_stack_config.influxdb.admin_password | length > 0
+    fail_msg: |
+      InfluxDB configuration is required for grafana stack.
+      Please provide:
+        compose_stack_config:
+          influxdb:
+            database: "your_database_name"
+            admin_user: "your_admin_user"
+            admin_password: "your_admin_password"
+    success_msg: "InfluxDB configuration validated successfully"
+
+- name: Validate grafana stack config - grafana settings
+  ansible.builtin.assert:
+    that:
+      - compose_stack_config.grafana is defined
+      - compose_stack_config.grafana.admin_user is defined
+      - compose_stack_config.grafana.admin_user | length > 0
+      - compose_stack_config.grafana.admin_password is defined
+      - compose_stack_config.grafana.admin_password | length > 0
+    fail_msg: |
+      Grafana admin configuration is required for grafana stack.
+      Please provide:
+        compose_stack_config:
+          grafana:
+            admin_user: "your_admin_user"
+            admin_password: "your_admin_password"
+    success_msg: "Grafana admin configuration validated successfully"
+...
