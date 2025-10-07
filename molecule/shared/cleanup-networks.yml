@@ -1,0 +1,9 @@
+---
+- name: Cleanup Networks
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Remove unused Docker networks
+      ansible.builtin.command: docker network prune -f
+      register: network_prune_result
+      changed_when: "'Deleted Networks:' in network_prune_result.stdout"

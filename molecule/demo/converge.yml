@@ -7,8 +7,5 @@
       vars:
         compose_stack_type: "demo"
         compose_stack_name: "demo-dev"
-        compose_stack_domain: "example.lan"
         compose_stack_state: "present"
-        compose_stack_additional_networks:
-          - traefik-dev
 ...

@@ -1,0 +1,9 @@
+---
+# Common variables for all Molecule scenarios
+
+# Domain used for all test stacks
+compose_stack_domain: "example.lan"
+
+# Common additional networks (e.g., traefik for ingress)
+compose_stack_additional_networks:
+  - traefik-dev

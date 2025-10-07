@@ -10,8 +10,8 @@ source ~/.venv_cnns/bin/activate
 # Get molecule command from first parameter, default to 'test'
 MOLECULE_CMD="${1:-test}"
 
-# Get all scenario directories except 'default'
-scenarios=$(find molecule -mindepth 1 -maxdepth 1 -type d ! -name 'default' -exec basename {} \;)
+# Get all scenario directories except 'shared' and 'group_vars'
+scenarios=$(find molecule -mindepth 1 -maxdepth 1 -type d ! -name 'shared' ! -name 'group_vars' -exec basename {} \;)
 
 echo "Found scenarios: $scenarios"
 echo "Running molecule command: $MOLECULE_CMD"

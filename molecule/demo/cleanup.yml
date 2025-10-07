@@ -13,9 +13,4 @@
       ansible.builtin.command: docker volume prune -f
       changed_when: "'Total reclaimed space' in prune_result.stdout"
       register: prune_result
-
-    - name: Remove unused Docker networks
-      ansible.builtin.command: docker network prune -f
-      register: network_prune_result
-      changed_when: "'Deleted Networks:' in network_prune_result.stdout"
 ...
