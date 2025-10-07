@@ -1,0 +1,8 @@
+---
+# Stack-specific validation for demo stack
+# Demo stack has no required config variables, so this file is intentionally minimal
+
+- name: Validate demo stack (no required config)
+  ansible.builtin.debug:
+    msg: "Demo stack has no required configuration variables"
+...

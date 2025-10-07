@@ -63,6 +63,11 @@ services:
       timeout: "10s"
       retries: 3
       start_period: "30s"
+    environment:
+      INFLUXDB_HOST: "{{ stack.name }}-influxdb"
+      INFLUXDB_DATABASE: "{{ compose_stack_config.influxdb.database }}"
+      INFLUXDB_USER: "{{ compose_stack_config.influxdb.admin_user }}"
+      INFLUXDB_PASSWORD: "{{ compose_stack_config.influxdb.admin_password }}"
     configs:
       - source: "telegraf.conf"
         target: "/etc/telegraf/telegraf.conf"
