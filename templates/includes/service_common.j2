@@ -1,5 +1,5 @@
 {# includes/service_common.j2 #}
     container_name: "{{ container_name }}"
-    image: "{{ svc_data.image }}"
-    restart: "{{ stack.restart }}"
+    image: "{{ compose_stack_config[svc_data.name].image | default(svc_data.image) }}"
+    restart: "{{ compose_stack_config[svc_data.name].restart | default(stack.restart) }}"
 {# end #}
