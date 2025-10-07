@@ -4,13 +4,16 @@
   gather_facts: False
   tasks:
     - name: Check demo-dev compose stack status
-      ansible.builtin.command: docker compose -f /opt/apps/demo-dev/compose.yml ps
+      ansible.builtin.command: docker compose -f /opt/apps/demo-dev/compose.yml ps --format json
       register: compose_stack
       changed_when: false
+      until: compose_stack.stdout_lines | map('from_json') | map(attribute='Health') | reject('equalto', 'healthy') | list | length == 0
+      retries: 30
+      delay: 2
 
     - name: Verify compose stack has healthy containers
       ansible.builtin.assert:
         that:
-          - "compose_stack.stdout is search('demo.*\\(healthy\\)')"
-        fail_msg: "Demo service is not healthy in demo-dev stack"
-        success_msg: "Demo service is healthy"
+          - compose_stack.stdout_lines | map('from_json') | map(attribute='Health') | reject('equalto', 'healthy') | list | length == 0
+        fail_msg: "Not all services are healthy in demo-dev stack"
+        success_msg: "All services are healthy"
