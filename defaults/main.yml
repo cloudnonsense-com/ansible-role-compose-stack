@@ -15,6 +15,7 @@ compose_stack_file_owner: "root"
 compose_stack_file_group: "root"
 compose_stack_file_mode: "0644"
 compose_stack_dir_mode: "0755"
+compose_stack_env_file_mode: "0600"  # Restrictive permissions for .env files containing secrets
 
 compose_stack_destroy_remove_volumes: true
 compose_stack_destroy_remove_images: "local"  # (all|local)

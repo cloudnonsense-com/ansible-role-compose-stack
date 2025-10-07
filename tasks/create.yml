@@ -8,6 +8,21 @@
     group: "{{ stack.file.group }}"
     mode:  "{{ stack.dir.mode }}"
 
+- name: "stack ({{ stack.name }}) | generate .env files for services with environment vars"
+  ansible.builtin.copy:
+    content: |
+      {% for key, value in svc_data.environment.items() %}
+      {{ key }}={{ value }}
+      {% endfor %}
+    dest: "{{ stack.dst_dir }}/.env.{{ svc_data.name }}"
+    owner: "{{ stack.file.owner }}"
+    group: "{{ stack.file.group }}"
+    mode: "{{ stack.env_file.mode }}"
+  loop: "{{ services }}"
+  loop_control:
+    loop_var: svc_data
+  when: svc_data.environment is defined and svc_data.environment is mapping
+
 - name: "stack ({{ stack.name }}) | render compose.yml"
   ansible.builtin.template:
     src:  "{{ stack.src_file }}"
