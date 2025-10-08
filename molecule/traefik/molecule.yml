@@ -24,7 +24,7 @@ provisioner:
     verify: verify.yml
 role_name_check: 1
 scenario:
-  name: grafana
+  name: traefik
   test_sequence:
     - destroy
     - syntax

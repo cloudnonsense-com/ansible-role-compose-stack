@@ -16,7 +16,7 @@
 {# --- BEGIN: RAW LABELS --- #}
 {% if svc_data.labels.raw is defined and svc_data.labels.raw | length > 0 %}
 {% for label_raw in svc_data.labels.raw %}
-      - "{{ label_raw }}"
+      - "{{ label_raw | replace('__CONTAINER_NAME__', container_name) }}"
 {% endfor %}
 {% endif %}
 {# --- END:   RAW LABELS --- #}

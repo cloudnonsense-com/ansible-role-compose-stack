@@ -1,0 +1,28 @@
+---
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+log:
+  level: ERROR # (DEBUG|ERROR)
+accessLog:
+  bufferingSize: 100
+api:
+  dashboard: true
+  insecure: true
+entryPoints:
+  http:
+    address: :80
+  https:
+    address: :443
+serversTransport:
+  insecureSkipVerify: true
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    # Specify which Docker network to use for backend connections
+    # Without this, Traefik may choose the wrong IP when containers are on multiple networks,
+    # leading to routing failures and gateway timeouts
+    network: "{{ stack.name }}"
+  file:
+    filename: /etc/traefik/tls.yml

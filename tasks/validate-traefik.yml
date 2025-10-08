@@ -1,0 +1,34 @@
+---
+# Stack-specific validation for traefik stack
+
+- name: Validate traefik stack config - TLS certificate content
+  ansible.builtin.assert:
+    that:
+      - compose_stack_config.traefik is defined
+      - compose_stack_config.traefik.tls_cert_content is defined
+      - compose_stack_config.traefik.tls_cert_content | length > 0
+    fail_msg: |
+      TLS certificate content is required for traefik stack.
+      Please provide:
+        compose_stack_config:
+          traefik:
+            tls_cert_content: "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+            tls_key_content: "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+    success_msg: "TLS certificate content validated successfully"
+  when: stack.state == "present"
+
+- name: Validate traefik stack config - TLS key content
+  ansible.builtin.assert:
+    that:
+      - compose_stack_config.traefik.tls_key_content is defined
+      - compose_stack_config.traefik.tls_key_content | length > 0
+    fail_msg: |
+      TLS key content is required for traefik stack.
+      Please provide:
+        compose_stack_config:
+          traefik:
+            tls_cert_content: "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+            tls_key_content: "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+    success_msg: "TLS key content validated successfully"
+  when: stack.state == "present"
+...

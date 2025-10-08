@@ -1,0 +1,13 @@
+---
+- name: Cleanup
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Destroy traefik stack
+      ansible.builtin.include_role:
+        name: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "traefik"
+        compose_stack_name: "traefik-dev"
+        compose_stack_state: "absent"
+...

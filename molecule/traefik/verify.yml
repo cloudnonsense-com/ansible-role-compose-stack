@@ -1,0 +1,20 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Check traefik-dev compose stack status
+      ansible.builtin.command: docker compose -f /opt/apps/traefik-dev/compose.yml ps --format json
+      register: compose_stack
+      changed_when: false
+      until: compose_stack.stdout_lines | map('from_json') | map(attribute='State') | reject('equalto', 'running') | list | length == 0
+      retries: 30
+      delay: 2
+
+    - name: Verify compose stack has running containers
+      ansible.builtin.assert:
+        that:
+          - compose_stack.stdout_lines | map('from_json') | map(attribute='State') | reject('equalto', 'running') | list | length == 0
+        fail_msg: "Not all services are running in traefik-dev stack"
+        success_msg: "All services are running"
+...

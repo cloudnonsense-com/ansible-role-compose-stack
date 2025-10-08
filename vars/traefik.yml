@@ -1,0 +1,34 @@
+---
+services:
+  - name: "traefik"
+    image: "traefik:v3.3"
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+
+    bind_mounts:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+    labels:
+      traefik:
+        enabled: true
+        pattern: "default"
+      raw:
+        - 'traefik.http.routers.__CONTAINER_NAME__-https.service=api@internal'
+
+    configs:
+      - source: "traefik.yaml"
+        target: "/etc/traefik/traefik.yaml"
+        mode: "0644"
+      - source: "tls.yml"
+        target: "/etc/traefik/tls.yml"
+        mode: "0644"
+      - source: "cert.crt"
+        target: "/var/traefik/certs/cert.crt"
+        mode: "0644"
+      - source: "cert.key"
+        target: "/var/traefik/certs/cert.key"
+        mode: "0600"
+...

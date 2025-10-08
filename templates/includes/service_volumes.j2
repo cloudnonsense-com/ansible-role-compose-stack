@@ -1,8 +1,15 @@
 {# includes/service_volumes.j2 #}
-{% if svc_data.volumes is defined and svc_data.volumes | length > 0 %}
+{% if (svc_data.volumes is defined and svc_data.volumes | length > 0) or (svc_data.bind_mounts is defined and svc_data.bind_mounts | length > 0) %}
     volumes:
+{% if svc_data.volumes is defined %}
 {% for volume in svc_data.volumes %}
       - "{{ volume }}"
 {% endfor %}
+{% endif %}
+{% if svc_data.bind_mounts is defined %}
+{% for bind_mount in svc_data.bind_mounts %}
+      - "{{ bind_mount }}"
+{% endfor %}
+{% endif %}
 {% endif %}
 {# end #}

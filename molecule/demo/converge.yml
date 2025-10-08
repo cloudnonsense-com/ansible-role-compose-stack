@@ -2,6 +2,8 @@
 - name: Converge
   hosts: all
   gather_facts: True
+  vars_files:
+    - ../group_vars/all.yml
   roles:
     - role: cloudnonsense.compose_stack
       vars:

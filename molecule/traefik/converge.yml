@@ -1,0 +1,34 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: True
+  vars_files:
+    - ../group_vars/all.yml
+  pre_tasks:
+    - name: Read certificate content from prepare step
+      ansible.builtin.slurp:
+        src: /tmp/traefik-test.crt
+      register: cert_content
+
+    - name: Read key content from prepare step
+      ansible.builtin.slurp:
+        src: /tmp/traefik-test.key
+      register: key_content
+
+    - name: Set certificate variables
+      ansible.builtin.set_fact:
+        traefik_test_cert: "{{ cert_content.content | b64decode }}"
+        traefik_test_key: "{{ key_content.content | b64decode }}"
+
+  roles:
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "traefik"
+        compose_stack_name: "traefik-dev"
+        compose_stack_state: "present"
+        compose_stack_additional_networks: []  # Traefik doesn't need additional networks
+        compose_stack_config:
+          traefik:
+            tls_cert_content: "{{ traefik_test_cert }}"
+            tls_key_content: "{{ traefik_test_key }}"
+...

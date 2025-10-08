@@ -20,7 +20,7 @@ provisioner:
     prepare: prepare.yml
     converge: converge.yml
     cleanup: cleanup.yml
-    side_effect: ../shared/cleanup-networks.yml  # Cleanup networks (runs after cleanup, before destroy)
+    side_effect: ../shared/cleanup-misc.yml
     verify: verify.yml
 role_name_check: 1
 scenario:
@@ -34,6 +34,6 @@ scenario:
     - idempotence
     - verify
     - cleanup
-    - side_effect  # Cleanup networks
+    - side_effect  # Cleanup misc artefacts
     - destroy
 ...
