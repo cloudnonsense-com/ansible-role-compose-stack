@@ -31,6 +31,9 @@ services:
       - source: "dashboard-prometheus-windowsexporter.json"
         target: "/etc/grafana/provisioning/dashboards/prometheus-windowsexporter.json"
         mode: "0644"
+      - source: "dashboard-isp-public-ip-info.json"
+        target: "/etc/grafana/provisioning/dashboards/isp-public-ip-info.json"
+        mode: "0644"
     volumes:
       - "grafana-data:/var/lib/grafana"
     depends_on:
