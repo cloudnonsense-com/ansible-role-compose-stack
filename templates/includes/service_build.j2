@@ -1,0 +1,20 @@
+{# includes/service_build.j2 #}
+{% if svc_data.build is defined %}
+    build:
+{% if svc_data.build.context is defined %}
+      context: "{{ svc_data.build.context }}"
+{% endif %}
+{% if svc_data.build.dockerfile is defined %}
+      dockerfile: "{{ svc_data.build.dockerfile }}"
+{% endif %}
+{% if svc_data.build.args is defined and svc_data.build.args | length > 0 %}
+      args:
+{% for key, value in svc_data.build.args.items() %}
+        {{ key }}: "{{ value }}"
+{% endfor %}
+{% endif %}
+{% if svc_data.build.target is defined %}
+      target: "{{ svc_data.build.target }}"
+{% endif %}
+{% endif %}
+{# end #}

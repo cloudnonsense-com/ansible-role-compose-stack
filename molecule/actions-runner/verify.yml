@@ -1,0 +1,48 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Check actions-runner-dev compose stack status
+      ansible.builtin.command: docker compose -f /opt/apps/actions-runner-dev/compose.yml ps --format json
+      register: compose_stack
+      changed_when: false
+      retries: 30
+      delay: 2
+
+    - name: Parse container status
+      ansible.builtin.set_fact:
+        containers: "{{ compose_stack.stdout_lines | map('from_json') | list }}"
+
+    - name: Verify compose stack has running containers
+      ansible.builtin.assert:
+        that:
+          - containers | length > 0
+          - containers | map(attribute='State') | select('equalto', 'running') | list | length > 0
+        fail_msg: "GitHub Actions runner container is not running"
+        success_msg: "GitHub Actions runner is running"
+
+    - name: Display runner container status
+      ansible.builtin.debug:
+        msg:
+          - "Container Name: {{ item.Name }}"
+          - "State: {{ item.State }}"
+          - "Status: {{ item.Status }}"
+      loop: "{{ containers }}"
+
+    - name: Check runner logs for successful registration
+      ansible.builtin.command: docker logs actions-runner-dev-github-runner
+      register: runner_logs
+      changed_when: false
+      failed_when: false
+
+    - name: Verify runner registered successfully
+      ansible.builtin.assert:
+        that:
+          - "'Successfully added the runner' in runner_logs.stdout or 'Listening for Jobs' in runner_logs.stdout"
+        fail_msg: |
+          Runner may not have registered successfully. Check logs:
+          {{ runner_logs.stdout }}
+        success_msg: "Runner registered successfully with GitHub"
+      when: runner_logs.rc == 0
+...

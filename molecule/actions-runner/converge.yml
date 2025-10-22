@@ -1,0 +1,66 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: True
+  vars_files:
+    - ../group_vars/all.yml
+  vars:
+    github_organization: "{{ lookup('env', 'GITHUB_ORGANIZATION') }}"
+    github_access_token: "{{ lookup('env', 'GITHUB_ACCESS_TOKEN') }}"
+    runner_name: "{{ lookup('env', 'RUNNER_NAME') }}"
+    runner_labels: "{{ lookup('env', 'RUNNER_LABELS') | default('self-hosted,Linux,X64', true) }}"
+  pre_tasks:
+    - name: Prompt for GitHub Organization if not set
+      ansible.builtin.pause:
+        prompt: "Enter your GitHub organization name (case-sensitive, no URL)"
+      register: prompt_github_organization
+      when: github_organization == ""
+
+    - name: Set GitHub Organization from prompt
+      ansible.builtin.set_fact:
+        github_organization: "{{ prompt_github_organization.user_input }}"
+      when: github_organization == ""
+
+    - name: Prompt for GitHub Access Token if not set
+      ansible.builtin.pause:
+        prompt: "Enter your GitHub Personal Access Token (requires 'repo' and 'admin:org' scopes)"
+        echo: false
+      register: prompt_github_access_token
+      when: github_access_token == ""
+
+    - name: Set GitHub Access Token from prompt
+      ansible.builtin.set_fact:
+        github_access_token: "{{ prompt_github_access_token.user_input }}"
+      when: github_access_token == ""
+
+    - name: Prompt for Runner Name if not set
+      ansible.builtin.pause:
+        prompt: "Enter a unique runner name (e.g., 'test-runner-1')"
+      register: prompt_runner_name
+      when: runner_name == ""
+
+    - name: Set Runner Name from prompt
+      ansible.builtin.set_fact:
+        runner_name: "{{ prompt_runner_name.user_input }}"
+      when: runner_name == ""
+
+    - name: Display configuration summary
+      ansible.builtin.debug:
+        msg:
+          - "GitHub Organization: {{ github_organization }}"
+          - "Runner Name: {{ runner_name }}"
+          - "Runner Labels: {{ runner_labels }}"
+          - "Access Token: *** (hidden)"
+  roles:
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "actions-runner"
+        compose_stack_name: "actions-runner-dev"
+        compose_stack_state: "present"
+        compose_stack_config:
+          github_runner:
+            github_organization: "{{ github_organization }}"
+            github_access_token: "{{ github_access_token }}"
+            runner_name: "{{ runner_name }}"
+            runner_labels: "{{ runner_labels }}"
+...

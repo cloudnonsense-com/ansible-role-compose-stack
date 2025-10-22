@@ -8,6 +8,37 @@
     group: "{{ stack.file.group }}"
     mode:  "{{ stack.dir.mode }}"
 
+- name: "stack ({{ stack.name }}) | create build dir for services with build context"
+  ansible.builtin.file:
+    path:  "{{ stack.dst_dir }}/build"
+    state: "directory"
+    owner: "{{ stack.file.owner }}"
+    group: "{{ stack.file.group }}"
+    mode:  "{{ stack.dir.mode }}"
+  when: services | selectattr('build', 'defined') | list | length > 0
+
+- name: "stack ({{ stack.name }}) | copy build files (Dockerfiles, scripts, etc.)"
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ stack.dst_dir }}/build/{{ item | basename }}"
+    owner: "{{ stack.file.owner }}"
+    group: "{{ stack.file.group }}"
+    mode: "{{ '0755' if item | regex_search('\\.(sh|bash)$') else stack.file.mode }}"
+  with_fileglob:
+    - "{{ role_path }}/templates/{{ stack.type }}/build/*"
+  when: services | selectattr('build', 'defined') | list | length > 0
+
+- name: "stack ({{ stack.name }}) | template build files (*.j2)"
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ stack.dst_dir }}/build/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    owner: "{{ stack.file.owner }}"
+    group: "{{ stack.file.group }}"
+    mode: "{{ '0755' if item | regex_search('\\.(sh|bash)\\.j2$') else stack.file.mode }}"
+  with_fileglob:
+    - "{{ role_path }}/templates/{{ stack.type }}/build/*.j2"
+  when: services | selectattr('build', 'defined') | list | length > 0
+
 - name: "stack ({{ stack.name }}) | generate .env files for services with environment vars"
   ansible.builtin.copy:
     content: |
