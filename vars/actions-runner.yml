@@ -5,8 +5,6 @@ services:
       context: "./build"
       dockerfile: "Dockerfile"
 
-    stop_grace_period: "30s"
-
     environment:
       GITHUB_ORGANIZATION: "{{ compose_stack_config.github_runner.github_organization }}"
       GITHUB_ACCESS_TOKEN: "{{ compose_stack_config.github_runner.github_access_token }}"
