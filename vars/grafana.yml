@@ -21,18 +21,28 @@ services:
     configs:
       - source: "datasources.yaml"
         target: "/etc/grafana/provisioning/datasources/datasources.yaml"
+        uid: "0"
+        gid: "0"
         mode: "0644"
       - source: "dashboard-provider.yaml"
         target: "/etc/grafana/provisioning/dashboards/default.yaml"
+        uid: "0"
+        gid: "0"
         mode: "0644"
       - source: "dashboard-isp-checker.json"
         target: "/etc/grafana/provisioning/dashboards/isp-checker.json"
+        uid: "0"
+        gid: "0"
         mode: "0644"
       - source: "dashboard-prometheus-windowsexporter.json"
         target: "/etc/grafana/provisioning/dashboards/prometheus-windowsexporter.json"
+        uid: "0"
+        gid: "0"
         mode: "0644"
       - source: "dashboard-isp-public-ip-info.json"
         target: "/etc/grafana/provisioning/dashboards/isp-public-ip-info.json"
+        uid: "0"
+        gid: "0"
         mode: "0644"
     volumes:
       - "grafana-data:/var/lib/grafana"
@@ -74,6 +84,8 @@ services:
     configs:
       - source: "telegraf.conf"
         target: "/etc/telegraf/telegraf.conf"
+        uid: "0"
+        gid: "0"
         mode: "0644"
     depends_on:
       - "influxdb"
@@ -96,6 +108,8 @@ services:
     configs:
       - source: "prometheus.yml"
         target: "/etc/prometheus/prometheus.yml"
+        uid: "0"
+        gid: "0"
         mode: "0644"
     volumes:
       - "prometheus:/prometheus"

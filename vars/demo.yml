@@ -22,5 +22,7 @@ services:
     configs:
       - source: "index.nginx-debian.html"
         target: "/usr/share/nginx/html/index.html"
+        uid: "0"
+        gid: "0"
         mode: "0644"
 ...

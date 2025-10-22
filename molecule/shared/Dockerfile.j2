@@ -1,19 +1,23 @@
 FROM geerlingguy/docker-ubuntu2204-ansible:latest
 
 # Install required base packages (Python + deps for Ansible modules)
+# Version pinning strategy:
+#   - Pinned: Python packages and gnupg/lsb-release for test reproducibility
+#   - Unpinned: ca-certificates and curl (security/time-sensitive, avoid cert expiration time bombs)
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      python3 \
-      python3-apt \
-      python3-debian \
-      python3-requests \
+      python3=3.10.6-1~22.04.1 \
+      python3-apt=2.4.0ubuntu4 \
+      python3-debian=0.1.43ubuntu1.1 \
+      python3-requests=2.25.1+dfsg-2ubuntu0.3 \
       ca-certificates \
       curl \
-      gnupg \
-      lsb-release \
+      gnupg=2.2.27-3ubuntu2.4 \
+      lsb-release=11.1.0ubuntu4 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Docker CE inside container (same steps geerlingguy.docker would normally do)
+# All Docker packages pinned to specific versions for reproducible test environments
 RUN install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
     chmod a+r /etc/apt/keyrings/docker.gpg && \
@@ -22,9 +26,9 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
       > /etc/apt/sources.list.d/docker.list && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      docker-ce \
-      docker-ce-cli \
-      containerd.io \
-      docker-buildx-plugin \
-      docker-compose-plugin \
+      docker-ce=5:28.5.1-1~ubuntu.22.04~jammy \
+      docker-ce-cli=5:28.5.1-1~ubuntu.22.04~jammy \
+      containerd.io=1.7.28-1~ubuntu.22.04~jammy \
+      docker-buildx-plugin=0.29.1-1~ubuntu.22.04~jammy \
+      docker-compose-plugin=2.40.1-1~ubuntu.22.04~jammy \
     && rm -rf /var/lib/apt/lists/*
