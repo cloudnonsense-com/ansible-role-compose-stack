@@ -1,10 +1,13 @@
 # Ansible Role: compose-stack
 
-Manage Docker Compose v2 stacks with opinionated, pre-configured definitions.
+Deploy opinionated Docker Compose v2 stacks with pre-configured services, automated validation, and security-hardened defaults.
 
 ## Requirements
 
-Ansible ≥ 2.12, Docker Engine + Compose v2, `community.docker` collection, Python `docker` library
+- Ansible ≥ 2.12
+- Docker Engine + Compose v2.40.1+
+- `community.docker` collection
+- Python `docker` library
 
 ## Installation
 
@@ -24,33 +27,39 @@ ansible-galaxy install cloudnonsense.compose_stack
         compose_stack_state: "present"
 ```
 
-**Required vars:** `compose_stack_type`, `compose_stack_name`, `compose_stack_state` (`present`/`absent`)
+### Configuration
+
+**Required:**
+- `compose_stack_type` - Stack type (demo/grafana/traefik/actions-runner)
+- `compose_stack_name` - Unique stack identifier
+- `compose_stack_state` - `present` or `absent`
 
 **Optional:**
-- `compose_stack_domain` - Domain for Traefik labels
-- `compose_stack_additional_networks` - Extra networks to attach (must exist externally)
-- `compose_stack_base_dir` - Base directory for stack files (default: `/opt/apps`)
-- `compose_stack_restart_policy` - Default restart policy (default: `always`)
-- `compose_stack_config` - Stack-specific configuration (see per-stack requirements)
-- `compose_stack_file_owner`, `compose_stack_file_group` - File ownership (default: `root`)
-- `compose_stack_file_mode`, `compose_stack_dir_mode` - Permissions (default: `0644`/`0755`)
-- `compose_stack_env_file_mode` - Permissions for .env files (default: `0600`)
-- `compose_stack_destroy_remove_volumes` - Remove volumes on destroy (default: `true`)
-- `compose_stack_destroy_remove_images` - Remove images on destroy (default: `local`, options: `all`/`local`)
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `compose_stack_domain` | `""` | Domain for Traefik routing labels |
+| `compose_stack_additional_networks` | `[]` | External networks to attach |
+| `compose_stack_base_dir` | `/opt/apps` | Stack deployment directory |
+| `compose_stack_restart_policy` | `always` | Default container restart policy |
+| `compose_stack_config` | `{}` | Stack-specific config + overrides |
+| `compose_stack_file_owner/group` | `root` | File ownership |
+| `compose_stack_file_mode` | `0644` | File permissions |
+| `compose_stack_dir_mode` | `0755` | Directory permissions |
+| `compose_stack_env_file_mode` | `0600` | .env file permissions (secure) |
+| `compose_stack_destroy_remove_volumes` | `true` | Remove volumes on destroy |
+| `compose_stack_destroy_remove_images` | `local` | Remove images (`all`/`local`) |
 
 ## Stacks
 
-### `demo`
-Nginx web server for testing.
+### demo
 
-**Requirements:** None
+Nginx web server for testing. No configuration required.
 
----
+### grafana
 
-### `grafana`
-Grafana + InfluxDB + Telegraf + Prometheus monitoring stack with pre-configured dashboards.
+Monitoring stack: Grafana + InfluxDB + Telegraf + Prometheus with provisioned dashboards.
 
-**Requirements:**
+**Required config:**
 ```yaml
 compose_stack_config:
   influxdb:
@@ -62,60 +71,47 @@ compose_stack_config:
     admin_password: "secure_password"
 ```
 
-**Includes:**
-- Grafana (port 37011) with provisioned datasources and dashboards
-- InfluxDB 1.8 (port 37012) for time-series data
-- Telegraf for metrics collection
-- Prometheus (port 37013) for additional metrics
+**Services:**
+- Grafana (port 37011) - Visualization + provisioned datasources/dashboards
+- InfluxDB 1.8 (port 37012) - Time-series database
+- Telegraf - Metrics collection
+- Prometheus (port 37013) - Additional metrics
 
----
+**Includes:** ISP public IP geolocation dashboard
 
-### `traefik`
-Traefik v3 reverse proxy with TLS support and Docker integration.
+### traefik
 
-**Requirements:**
-- Traefik configuration files in `templates/traefik/`:
-  - `traefik.yaml` - Main Traefik configuration
-  - `tls.yml` - TLS configuration
-  - `cert.crt` and `cert.key` - TLS certificates
+Traefik v3 reverse proxy with TLS, Docker discovery, and automatic routing.
 
-**Features:**
-- Ports: 80 (HTTP), 443 (HTTPS), 8080 (Dashboard)
-- Docker socket access for container discovery
-- Pre-configured with TLS certificates
+**Required files in `templates/traefik/`:**
+- `traefik.yaml` - Main configuration
+- `tls.yml` - TLS settings
+- `cert.crt` and `cert.key` - TLS certificates
 
----
+**Exposes:** 80 (HTTP), 443 (HTTPS), 8080 (Dashboard)
 
-### `actions-runner`
-Self-hosted GitHub Actions runner with Docker build support.
+### actions-runner
 
-**Requirements:**
+Self-hosted GitHub Actions runner with Docker-in-Docker build support.
+
+**Required config:**
 ```yaml
 compose_stack_config:
   github_runner:
     github_organization: "your-org"
     github_access_token: "ghp_xxxxx"
     runner_name: "runner-name"
-    runner_labels: "self-hosted,linux,x64"  # Optional, defaults shown
+    runner_labels: "self-hosted,linux,x64"  # Optional
 ```
 
-**Features:**
-- Custom build context with Dockerfile support
-- Automatic runner registration
-- Docker-in-Docker capability for builds
+**Features:** Custom Dockerfile, automatic registration, DinD capability
 
-## Per-Service Overrides
+## Advanced Features
 
-Override default image or restart policy for specific services:
+### Per-Service Overrides
 
-```yaml
-compose_stack_config:
-  <service>:
-    image: "custom/image:tag"    # Override default image
-    restart: "on-failure"        # Override restart policy for this service
-```
+Customize images or restart policies per service:
 
-**Example:**
 ```yaml
 compose_stack_config:
   grafana:
@@ -123,9 +119,20 @@ compose_stack_config:
     restart: "unless-stopped"
 ```
 
-## Environment Variables
+### Environment Variables
 
-Service environment variables are automatically extracted to `.env` files with restrictive permissions (`0600` by default). This enhances security by isolating credentials and secrets from the main compose file.
+Credentials and environment variables are automatically extracted to `.env` files with `0600` permissions for enhanced security.
+
+### Preflight Checks
+
+Automated validation before deployment:
+- Docker and Docker Compose v2 availability
+- Required external networks existence
+- Stack-specific configuration validation
+
+### Build Context Support
+
+Stacks with custom Docker builds (e.g., `actions-runner`) automatically handle build context creation, file templating, and script permissions.
 
 ## License
 
