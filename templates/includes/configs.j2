@@ -1,4 +1,16 @@
 {# includes/configs.j2 #}
+{#
+  IMPORTANT: Dollar Sign Escaping for Docker Compose
+  ---------------------------------------------------
+  Docker Compose interprets $VAR as variable substitution. To embed literal dollar
+  signs in inline configs, they must be escaped as $$:
+    - ${FOO} becomes $${FOO}
+    - Literal $$ becomes $$$$ (rare edge case)
+
+  Example: "id = ${USER_ID}" → "id = $${USER_ID}"
+
+  The replace('$', '$$') filter auto-escapes both .j2 templates and static files.
+#}
 {% set all_configs = services | selectattr('configs', 'defined') | map(attribute='configs') | flatten | list %}
 {% if all_configs | length > 0 %}
 configs:

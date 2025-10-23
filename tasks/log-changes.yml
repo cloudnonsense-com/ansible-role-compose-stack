@@ -1,0 +1,19 @@
+---
+# log-changes.yml - Optional deployment history logging
+#
+# This task logs deployment changes to a history file in the stack directory.
+# Controlled by: compose_stack_log_deployments (default: false)
+#
+# Log format: ISO8601_timestamp | user | state | service1,service2,service3
+
+- name: "stack ({{ stack.name }}) | log deployment to history file"
+  ansible.builtin.lineinfile:
+    path: "{{ stack.dst_dir }}/.deployment-history"
+    line: "{{ ansible_date_time.iso8601 }} | {{ ansible_user_id }} | {{ stack.state }} | {{ services | map(attribute='name') | join(',') }}"
+    create: yes
+    owner: "{{ stack.file.owner }}"
+    group: "{{ stack.file.group }}"
+    mode: "0644"
+  when: compose_stack_log_deployments | default(false)
+
+...

@@ -21,7 +21,7 @@ provisioner:
     converge: converge.yml
     cleanup: cleanup.yml
     side_effect: ../shared/cleanup-misc.yml
-    verify: verify.yml
+    verify: ../shared/verify-common.yml
 role_name_check: 1
 scenario:
   name: traefik

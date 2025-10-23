@@ -1,17 +1,20 @@
 ---
 
-- include_tasks: validate.yml
+- ansible.builtin.include_tasks: validate.yml
 
 - ansible.builtin.include_vars:
     file: "{{ stack.type }}.yml"
 
 - name: Include stack-specific validation
-  include_tasks: "validate-{{ stack.type }}.yml"
+  ansible.builtin.include_tasks: "validate-{{ stack.type }}.yml"
 
-- include_tasks: create.yml
+- ansible.builtin.include_tasks: preflight.yml
   when: stack.state == "present"
 
-- include_tasks: destroy.yml
+- ansible.builtin.include_tasks: create.yml
+  when: stack.state == "present"
+
+- ansible.builtin.include_tasks: destroy.yml
   when: stack.state == "absent"
 
 ...

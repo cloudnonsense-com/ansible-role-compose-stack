@@ -1,0 +1,36 @@
+---
+# preflight.yml - Pre-deployment checks
+#
+# Verifies that Docker and Docker Compose v2 are available before attempting deployment.
+# Also checks that required networks exist if additional_networks are specified.
+
+- name: "preflight | check Docker is available"
+  ansible.builtin.command: docker version
+  changed_when: false
+  register: docker_check
+  failed_when: docker_check.rc != 0
+
+- name: "preflight | check Docker Compose v2 is available"
+  ansible.builtin.command: docker compose version
+  changed_when: false
+  register: compose_check
+  failed_when: compose_check.rc != 0
+
+- name: "preflight | verify Docker Compose version is v2"
+  ansible.builtin.assert:
+    that:
+      - "'v2.' in compose_check.stdout or 'version 2.' in compose_check.stdout"
+    fail_msg: |
+      Docker Compose v2 is required. Found: {{ compose_check.stdout }}
+      Please upgrade to Docker Compose v2.x
+    quiet: true
+
+- name: "preflight | verify required networks exist"
+  community.docker.docker_network_info:
+    name: "{{ item }}"
+  loop: "{{ [stack.name] + stack.additional_networks }}"
+  register: network_check
+  when: stack.additional_networks | length > 0
+  failed_when: not network_check.exists
+
+...

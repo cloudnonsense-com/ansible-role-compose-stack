@@ -1,0 +1,71 @@
+---
+# Shared verification playbook for all molecule scenarios
+# This playbook verifies that all containers in a compose stack are healthy (or running if no healthcheck exists)
+#
+# Required variables (set in converge.yml):
+#   - compose_stack_name: The name of the stack (e.g., "demo-dev", "grafana-dev")
+#
+# Usage in scenario verify.yml:
+#   - ansible.builtin.import_playbook: ../shared/verify-common.yml
+
+- name: Verify Compose Stack Health
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: "Check {{ compose_stack_name }} compose stack status"
+      ansible.builtin.command: docker compose -f /opt/apps/{{ compose_stack_name }}/compose.yml ps --format json
+      register: compose_stack
+      changed_when: false
+
+    - name: Parse container status
+      ansible.builtin.set_fact:
+        containers: "{{ compose_stack.stdout_lines | map('from_json') | list }}"
+
+    - name: Determine verification strategy (healthcheck vs state)
+      ansible.builtin.set_fact:
+        has_healthchecks: "{{ containers | selectattr('Health', 'defined') | list | length > 0 }}"
+
+    - name: Wait for all containers with healthchecks to become healthy
+      ansible.builtin.command: docker compose -f /opt/apps/{{ compose_stack_name }}/compose.yml ps --format json
+      register: compose_stack_health
+      changed_when: false
+      until: >
+        compose_stack_health.stdout_lines | map('from_json')
+        | selectattr('Health', 'defined')
+        | map(attribute='Health')
+        | reject('equalto', 'healthy')
+        | list | length == 0
+      retries: 30
+      delay: 2
+      when: has_healthchecks | bool
+
+    - name: Wait for all containers without healthchecks to be running
+      ansible.builtin.command: docker compose -f /opt/apps/{{ compose_stack_name }}/compose.yml ps --format json
+      register: compose_stack_state
+      changed_when: false
+      until: >
+        compose_stack_state.stdout_lines | map('from_json')
+        | map(attribute='State')
+        | reject('equalto', 'running')
+        | list | length == 0
+      retries: 30
+      delay: 2
+      when: not (has_healthchecks | bool)
+
+    - name: Verify compose stack has healthy containers (with healthchecks)
+      ansible.builtin.assert:
+        that:
+          - compose_stack_health.stdout_lines | map('from_json') | map(attribute='Health') | reject('equalto', 'healthy') | list | length == 0
+        fail_msg: "Not all services are healthy in {{ compose_stack_name }} stack"
+        success_msg: "All services are healthy in {{ compose_stack_name }} stack"
+      when: has_healthchecks | bool
+
+    - name: Verify compose stack has running containers (without healthchecks)
+      ansible.builtin.assert:
+        that:
+          - compose_stack_state.stdout_lines | map('from_json') | map(attribute='State') | reject('equalto', 'running') | list | length == 0
+        fail_msg: "Not all services are running in {{ compose_stack_name }} stack"
+        success_msg: "All services are running in {{ compose_stack_name }} stack"
+      when: not (has_healthchecks | bool)
+
+...

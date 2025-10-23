@@ -19,7 +19,7 @@
             github_organization: "your-github-org"
             github_access_token: "your-pat-token"
             runner_name: "unique-runner-name"
-            runner_labels: "self-hosted,Linux,X64"  # optional, defaults to "self-hosted,Linux,X64"
+            runner_labels: "self-hosted,linux,x64"  # optional, defaults to "self-hosted,linux,x64"
 
       IMPORTANT: The GitHub access token must have the following scopes:
         - repo (Full control of private repositories)

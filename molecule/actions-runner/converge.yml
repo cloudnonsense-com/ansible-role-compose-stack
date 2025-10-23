@@ -8,7 +8,7 @@
     github_organization: "{{ lookup('env', 'GITHUB_ORGANIZATION') }}"
     github_access_token: "{{ lookup('env', 'GITHUB_ACCESS_TOKEN') }}"
     runner_name: "{{ lookup('env', 'RUNNER_NAME') }}"
-    runner_labels: "{{ lookup('env', 'RUNNER_LABELS') | default('self-hosted,Linux,X64', true) }}"
+    runner_labels: "{{ lookup('env', 'RUNNER_LABELS') | default('self-hosted,linux,x64', true) }}"
   pre_tasks:
     - name: Prompt for GitHub Organization if not set
       ansible.builtin.pause:

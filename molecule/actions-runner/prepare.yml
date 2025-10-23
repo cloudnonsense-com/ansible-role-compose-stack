@@ -10,4 +10,5 @@
         state: present
       loop:
         - actions-runner-dev
+        - traefik-dev # not needed, but required by the test
 ...

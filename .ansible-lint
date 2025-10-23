@@ -1,0 +1,46 @@
+---
+# Ansible Lint Configuration for compose-stack role
+# https://ansible.readthedocs.io/projects/lint/
+
+profile: production
+
+kinds:
+  - yaml: "**/*.yml"
+  - yaml: "**/*.yaml"
+  - jinja2: "**/*.j2"
+
+# Rules to skip entirely
+skip_list:
+  - yaml[line-length]  # Allow longer lines in templates and complex tasks
+  - jinja[spacing]     # Template spacing is intentional for readability
+  - var-naming[no-role-prefix]  # Role uses compose_stack_ prefix intentionally
+
+# Rules that generate warnings instead of errors
+warn_list:
+  - experimental  # Allow experimental features with warnings
+  - no-changed-when  # Warn but don't fail on missing changed_when
+  - command-instead-of-module  # Some docker commands are necessary
+
+# Paths to exclude from linting
+exclude_paths:
+  - .git/
+  - .github/
+  - .ignore/
+  - molecule/shared/prepare.yml.out  # Generated file
+  - .ansible-lint  # Don't lint the lint config
+
+# Use all default rules except those in skip_list
+use_default_rules: true
+
+# Enable offline mode (don't check for updates)
+offline: false
+
+# Set verbosity (0-2)
+# verbosity: 1
+
+# Require specific Ansible version
+# write_list:
+#   - skip_this_tag
+#   - experimental
+
+...
