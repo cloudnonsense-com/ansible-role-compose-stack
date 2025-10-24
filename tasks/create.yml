@@ -22,6 +22,7 @@
   loop_control:
     loop_var: svc_data
   when: svc_data.environment is defined and svc_data.environment is mapping
+  no_log: true
 
 - name: "stack ({{ stack.name }}) | render compose.yml"
   ansible.builtin.template:

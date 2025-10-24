@@ -1,0 +1,37 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Include shared verification tasks
+      ansible.builtin.include_tasks: ../shared/verify-common.yml
+      vars:
+        compose_stack_name: "netbird-dev"
+
+    - name: Verify netbird container is running
+      ansible.builtin.command: docker ps --filter "name=netbird-dev-netbird" --format "{{ '{{' }}.Names{{ '}}' }}"
+      register: netbird_container
+      changed_when: false
+      failed_when: "'netbird-dev-netbird' not in netbird_container.stdout"
+
+    - name: Verify netbird daemon is running (check socket existence)
+      ansible.builtin.command: docker exec netbird-dev-netbird test -S /var/run/netbird.sock
+      register: netbird_socket
+      changed_when: false
+      failed_when: netbird_socket.rc != 0
+
+    - name: Verify netbird binary exists and is executable
+      ansible.builtin.command: docker exec netbird-dev-netbird which netbird
+      register: netbird_binary
+      changed_when: false
+      failed_when: netbird_binary.rc != 0
+
+    - name: Verify capabilities are set correctly
+      ansible.builtin.shell: docker inspect netbird-dev-netbird --format='{{ '{{' }}json .HostConfig.CapAdd{{ '}}' }}'
+      register: netbird_caps
+      changed_when: false
+      failed_when: >
+        'NET_ADMIN' not in netbird_caps.stdout or
+        'SYS_ADMIN' not in netbird_caps.stdout or
+        'SYS_RESOURCE' not in netbird_caps.stdout
+...

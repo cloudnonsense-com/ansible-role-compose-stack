@@ -26,4 +26,5 @@
         - admin:org (Full control of orgs and teams, read and write org projects)
     success_msg: "GitHub Actions runner configuration validated successfully"
   when: stack.state == "present"
+  no_log: true
 ...

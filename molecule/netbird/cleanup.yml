@@ -1,0 +1,25 @@
+---
+- name: Cleanup
+  hosts: all
+  vars:
+    netbird_setup_key: "{{ lookup('env', 'NETBIRD_SETUP_KEY') | default('cleanup-placeholder', true) }}"
+  tasks:
+    - name: Destroy netbird stack
+      ansible.builtin.include_role:
+        name: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "netbird"
+        compose_stack_name: "netbird-dev"
+        compose_stack_state: "absent"
+        compose_stack_additional_networks: []  # Netbird doesn't need additional networks
+        compose_stack_destroy_remove_volumes: true
+        compose_stack_destroy_remove_images: "local"
+        compose_stack_config:
+          netbird:
+            setup_key: "{{ netbird_setup_key }}"
+
+    - name: Remove external Docker network
+      community.docker.docker_network:
+        name: "netbird-dev"
+        state: absent
+...

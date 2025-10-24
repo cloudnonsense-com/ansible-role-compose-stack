@@ -1,0 +1,29 @@
+---
+# Stack-specific validation for netbird stack
+
+- name: Validate netbird stack config - setup key
+  ansible.builtin.assert:
+    that:
+      - compose_stack_config.netbird is defined
+      - compose_stack_config.netbird.setup_key is defined
+      - compose_stack_config.netbird.setup_key | length > 0
+    fail_msg: |
+      Netbird setup key is required for netbird stack.
+      Please provide:
+        compose_stack_config:
+          netbird:
+            setup_key: "your-netbird-setup-key"
+
+      To obtain a setup key:
+        1. Log in to your Netbird dashboard (https://app.netbird.io)
+        2. Navigate to Setup Keys
+        3. Create a new setup key
+        4. Copy the key and provide it in your configuration
+
+      IMPORTANT: This stack uses experimental bridged networking instead of
+      the official host networking mode. If connectivity issues occur, we may
+      need to implement network_mode: host support.
+    success_msg: "Netbird setup key validated successfully"
+  when: stack.state == "present"
+  no_log: true
+...

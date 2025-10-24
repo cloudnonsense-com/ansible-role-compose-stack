@@ -1,0 +1,36 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: True
+  vars_files:
+    - ../group_vars/all.yml
+  vars:
+    netbird_setup_key: "{{ lookup('env', 'NETBIRD_SETUP_KEY') }}"
+  pre_tasks:
+    - name: Prompt for Netbird Setup Key if not set
+      ansible.builtin.pause:
+        prompt: "Enter your Netbird Setup Key (get from https://app.netbird.io -> Setup Keys)"
+        echo: false
+      register: prompt_netbird_setup_key
+      when: netbird_setup_key == ""
+
+    - name: Set Netbird Setup Key from prompt
+      ansible.builtin.set_fact:
+        netbird_setup_key: "{{ prompt_netbird_setup_key.user_input }}"
+      when: netbird_setup_key == ""
+
+    - name: Display configuration summary
+      ansible.builtin.debug:
+        msg:
+          - "Netbird Setup Key: *** (hidden)"
+  roles:
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "netbird"
+        compose_stack_name: "netbird-dev"
+        compose_stack_state: "present"
+        compose_stack_additional_networks: []  # Netbird doesn't need additional networks
+        compose_stack_config:
+          netbird:
+            setup_key: "{{ netbird_setup_key }}"
+...

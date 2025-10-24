@@ -19,6 +19,7 @@ Developer guidance for this Ansible role managing Docker Compose v2 stacks.
 **Templates**: `templates/compose.yml.j2` + modular includes:
 - `includes/service_common.j2` - Base service config
 - `includes/service_build.j2` - Build context handling
+- `includes/service_capabilities.j2` - Linux capabilities (cap_add)
 - `includes/configs.j2` - Docker configs
 - Loops `services` list, each item becomes `svc_data`
 
@@ -48,6 +49,7 @@ molecule converge -s demo && molecule verify -s demo
 | `grafana` | Monitoring (Grafana/InfluxDB/Telegraf/Prometheus) | `templates/grafana/` dashboards |
 | `traefik` | Reverse proxy v3 | `templates/traefik/` configs + certs |
 | `actions-runner` | GitHub Actions runner | `templates/actions-runner/build/` Dockerfile + entrypoint |
+| `netbird` | VPN mesh network client | - |
 
 ## Adding a Stack
 
@@ -63,6 +65,9 @@ molecule converge -s demo && molecule verify -s demo
 - **Validation chain**: Generic → Stack-specific → Preflight (Docker/networks)
 - **Permissions**: Files `0644`, dirs `0755`, .env `0600`
 - **Build context**: Auto-detected via `build` attribute, files templated from `templates/{{ type }}/build/`
+- **Linux capabilities**: Optional `capabilities` list in service definition (e.g., `NET_ADMIN`, `SYS_ADMIN`)
 - **Destroy options**: `compose_stack_destroy_remove_volumes` (bool), `compose_stack_destroy_remove_images` (all/local)
 - **Compatibility**: Docker Compose v2.40.1+ (`docker compose` not `docker-compose`)
 - **Shared verification**: Common container/network checks in `molecule/shared/verify-common.yml`
+- **Netbird networking**: Uses experimental bridged networking (standard Docker network) instead of official `network_mode: host`. May require host networking if connectivity issues occur.
+- it's mandatory for every stack to have a healthcheck.

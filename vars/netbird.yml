@@ -1,0 +1,23 @@
+---
+services:
+  - name: "netbird"
+    image: "netbirdio/netbird:latest"
+
+    capabilities:
+      - "NET_ADMIN"
+      - "SYS_ADMIN"
+      - "SYS_RESOURCE"
+
+    healthcheck:
+      test: ["CMD-SHELL", "netbird status --json 2>/dev/null | grep -q connected.:true || exit 1"]
+      interval: "30s"
+      timeout: "10s"
+      retries: 5
+      start_period: "120s"
+
+    environment:
+      NB_SETUP_KEY: "{{ compose_stack_config.netbird.setup_key }}"
+
+    volumes:
+      - "netbird-client:/var/lib/netbird"
+...
