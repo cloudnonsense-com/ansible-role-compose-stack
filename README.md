@@ -2,6 +2,8 @@
 
 Deploy opinionated Docker Compose v2 stacks with pre-configured services, automated validation, and security-hardened defaults.
 
+**[View Architecture Diagrams →](docs/architecture.md)**
+
 ## Requirements
 
 - Ansible ≥ 2.12
