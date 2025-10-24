@@ -1,0 +1,10 @@
+---
+- name: Verify Traefik Stack
+  hosts: all
+  gather_facts: False
+  vars:
+    compose_stack_name: "traefik-dev"
+  tasks:
+    - name: Include shared verification tasks
+      ansible.builtin.include_tasks: ../shared/verify-common.yml
+...
