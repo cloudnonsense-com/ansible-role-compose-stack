@@ -1,9 +1,9 @@
 ---
-- name: Verify Demo Stack
+- name: Verify Actions Stack
   hosts: all
   gather_facts: False
   vars:
-    compose_stack_name: "demo-dev"
+    compose_stack_name: "actions-dev"
   tasks:
     - name: Include shared verification tasks
       ansible.builtin.include_tasks: ../_shared/verify-common.yml

@@ -1,13 +1,14 @@
 ---
 - name: Cleanup
   hosts: all
-  gather_facts: False
-  tasks:
-    - name: Destroy traefik stack
-      ansible.builtin.include_role:
-        name: cloudnonsense.compose_stack
+  gather_facts: True
+  roles:
+    - role: cloudnonsense.compose_stack
       vars:
         compose_stack_type: "traefik"
         compose_stack_name: "traefik-dev"
         compose_stack_state: "absent"
+  post_tasks:
+    - name: Include shared volume cleanup tasks
+      ansible.builtin.include_tasks: ../_shared/cleanup-volumes.yml
 ...

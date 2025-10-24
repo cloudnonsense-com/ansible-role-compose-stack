@@ -7,7 +7,7 @@
 #
 # Usage in scenario verify.yml:
 #   - name: Include shared verification tasks
-#     ansible.builtin.include_tasks: ../shared/verify-common.yml
+#     ansible.builtin.include_tasks: ../_shared/verify-common.yml
 
 - name: "Wait for all containers in {{ compose_stack_name }} to become healthy"
   ansible.builtin.command: docker compose -f /opt/apps/{{ compose_stack_name }}/compose.yml ps --format json

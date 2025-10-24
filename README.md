@@ -32,7 +32,7 @@ ansible-galaxy install cloudnonsense.compose_stack
 ### Configuration
 
 **Required:**
-- `compose_stack_type` - Stack type (demo/grafana/traefik/actions-runner)
+- `compose_stack_type` - Stack type (demo/grafana/traefik/actions)
 - `compose_stack_name` - Unique stack identifier
 - `compose_stack_state` - `present` or `absent`
 
@@ -92,7 +92,7 @@ Traefik v3 reverse proxy with TLS, Docker discovery, and automatic routing.
 
 **Exposes:** 80 (HTTP), 443 (HTTPS), 8080 (Dashboard)
 
-### actions-runner
+### actions
 
 Self-hosted GitHub Actions runner with Docker-in-Docker build support.
 
@@ -100,13 +100,15 @@ Self-hosted GitHub Actions runner with Docker-in-Docker build support.
 ```yaml
 compose_stack_config:
   github_runner:
+    runner_scope: "org"  # Optional: "org" (default) or "repo"
     github_organization: "your-org"
+    github_repository: "your-repo"  # Required only when runner_scope is "repo"
     github_access_token: "ghp_xxxxx"
     runner_name: "runner-name"
     runner_labels: "self-hosted,linux,x64"  # Optional
 ```
 
-**Features:** Custom Dockerfile, automatic registration, DinD capability
+**Features:** Custom Dockerfile, automatic registration, DinD capability, org-level and repo-level scopes
 
 ## Advanced Features
 
@@ -134,7 +136,7 @@ Automated validation before deployment:
 
 ### Build Context Support
 
-Stacks with custom Docker builds (e.g., `actions-runner`) automatically handle build context creation, file templating, and script permissions.
+Stacks with custom Docker builds (e.g., `actions`) automatically handle build context creation, file templating, and script permissions.
 
 ## License
 

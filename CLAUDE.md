@@ -31,15 +31,15 @@ Developer guidance for this Ansible role managing Docker Compose v2 stacks.
 
 ## Testing
 
-Per-stack scenarios (no `molecule/default/`). Shared verification in `molecule/shared/verify-common.yml`.
+Per-stack scenarios. Shared resources in `molecule/_shared/` (common-vars.yml, verify-common.yml, cleanup-volumes.yml, cleanup-misc.yml, Dockerfile.j2).
 
 ```bash
-./test-all-scenarios.sh [test|converge|verify]  # All scenarios
+./test-all-scenarios.sh [test|converge|verify]  # All scenarios (excludes _shared)
 molecule test -s demo                            # Single scenario
 molecule converge -s demo && molecule verify -s demo
 ```
 
-**Scenario structure**: `molecule/{{ type }}/` with molecule.yml, prepare.yml, converge.yml, verify.yml (includes shared), cleanup.yml
+**Scenario structure**: `molecule/{{ type }}/` with molecule.yml, prepare.yml, converge.yml, verify.yml, cleanup.yml. All include shared resources from `_shared/`.
 
 ## Stacks
 
@@ -48,7 +48,7 @@ molecule converge -s demo && molecule verify -s demo
 | `demo` | Nginx test server | - |
 | `grafana` | Monitoring (Grafana/InfluxDB/Telegraf/Prometheus) | `templates/grafana/` dashboards |
 | `traefik` | Reverse proxy v3 | `templates/traefik/` configs + certs |
-| `actions-runner` | GitHub Actions runner | `templates/actions-runner/build/` Dockerfile + entrypoint |
+| `actions` | GitHub Actions runner | `templates/actions/build/` Dockerfile + entrypoint |
 | `netbird` | VPN mesh network client | - |
 
 ## Adding a Stack
@@ -68,6 +68,7 @@ molecule converge -s demo && molecule verify -s demo
 - **Linux capabilities**: Optional `capabilities` list in service definition (e.g., `NET_ADMIN`, `SYS_ADMIN`)
 - **Destroy options**: `compose_stack_destroy_remove_volumes` (bool), `compose_stack_destroy_remove_images` (all/local)
 - **Compatibility**: Docker Compose v2.40.1+ (`docker compose` not `docker-compose`)
-- **Shared verification**: Common container/network checks in `molecule/shared/verify-common.yml`
+- **Shared resources**: All scenarios use `molecule/_shared/` for common vars, verification, and cleanup tasks
 - **Netbird networking**: Uses experimental bridged networking (standard Docker network) instead of official `network_mode: host`. May require host networking if connectivity issues occur.
-- it's mandatory for every stack to have a healthcheck.
+- **Healthchecks**: Mandatory for all stacks
+- **Actions runner**: Supports both org-level (default) and repo-level deployment scopes with appropriate token permissions

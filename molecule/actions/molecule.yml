@@ -10,7 +10,7 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /var/run/docker.sock:/var/run/docker.sock:rw
     privileged: true
-    dockerfile: ../shared/Dockerfile.j2
+    dockerfile: ../_shared/Dockerfile.j2
     build_image: true
     pre_build_image: false # set to true if image should not be built
     keep_volumes: false
@@ -20,11 +20,11 @@ provisioner:
     prepare: prepare.yml
     converge: converge.yml
     cleanup: cleanup.yml
-    side_effect: ../shared/cleanup-misc.yml
+    side_effect: ../_shared/cleanup-misc.yml
     verify: verify.yml
 role_name_check: 1
 scenario:
-  name: actions-runner
+  name: actions
   test_sequence:
     - destroy
     - syntax

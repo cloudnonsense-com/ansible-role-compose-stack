@@ -5,8 +5,8 @@
   roles:
     - role: cloudnonsense.compose_stack
       vars:
-        compose_stack_type: "demo"
-        compose_stack_name: "demo-dev"
+        compose_stack_type: "actions"
+        compose_stack_name: "actions-dev"
         compose_stack_state: "absent"
   post_tasks:
     - name: Include shared volume cleanup tasks

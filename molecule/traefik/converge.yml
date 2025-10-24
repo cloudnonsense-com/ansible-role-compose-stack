@@ -3,7 +3,7 @@
   hosts: all
   gather_facts: True
   vars_files:
-    - ../group_vars/all.yml
+    - ../_shared/common-vars.yml
   pre_tasks:
     - name: Read certificate content from prepare step
       ansible.builtin.slurp:

@@ -17,8 +17,6 @@
             admin_user: "admin"
             admin_password: "test_password"
   post_tasks:
-    - name: Remove all unnamed (dangling) Docker volumes
-      ansible.builtin.command: docker volume prune -f
-      changed_when: "'Total reclaimed space' in prune_result.stdout"
-      register: prune_result
+    - name: Include shared volume cleanup tasks
+      ansible.builtin.include_tasks: ../_shared/cleanup-volumes.yml
 ...

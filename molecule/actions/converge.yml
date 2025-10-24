@@ -1,0 +1,21 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: True
+  vars_files:
+    - ../_shared/common-vars.yml
+  roles:
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "actions"
+        compose_stack_name: "actions-dev"
+        compose_stack_state: "present"
+        compose_stack_config:
+          github_runner:
+            runner_scope: "{{ lookup('env', 'RUNNER_SCOPE') | default('org', true) }}"
+            github_organization: "{{ lookup('env', 'GITHUB_ORGANIZATION') }}"
+            github_repository: "{{ lookup('env', 'GITHUB_REPOSITORY') | default('') }}"
+            github_access_token: "{{ lookup('env', 'GITHUB_ACCESS_TOKEN') }}"
+            runner_name: "{{ lookup('env', 'RUNNER_NAME') }}"
+            runner_labels: "{{ lookup('env', 'RUNNER_LABELS') | default('self-hosted,linux,x64', true) }}"
+...

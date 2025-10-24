@@ -143,7 +143,7 @@ graph LR
     Role[Ansible Role] --> Demo[demo<br/>Nginx Test]
     Role --> Grafana[grafana<br/>Monitoring Stack]
     Role --> Traefik[traefik<br/>Reverse Proxy]
-    Role --> Runner[actions-runner<br/>GitHub Runner]
+    Role --> Runner[actions<br/>GitHub Runner]
     Role --> Netbird[netbird<br/>VPN Client]
 
     Demo --> DemoAssets[No Custom Assets]
@@ -152,7 +152,7 @@ graph LR
 
     Traefik --> TraefikAssets[templates/traefik/<br/>Configs + Certs]
 
-    Runner --> RunnerAssets[templates/actions-runner/build/<br/>Dockerfile + Entrypoint]
+    Runner --> RunnerAssets[templates/actions/build/<br/>Dockerfile + Entrypoint]
 
     Netbird --> NetbirdAssets[Bridged Network Mode<br/>Experimental]
 
@@ -168,29 +168,35 @@ graph LR
 
 ```mermaid
 flowchart TD
-    Test[Test Execution] --> Script[./test-all-scenarios.sh]
+    Test[Test Execution] --> Script[./test-all-scenarios.sh<br/>Excludes _shared]
     Script --> MolDemo[molecule/demo/]
     Script --> MolGrafana[molecule/grafana/]
     Script --> MolTraefik[molecule/traefik/]
-    Script --> MolRunner[molecule/actions-runner/]
+    Script --> MolRunner[molecule/actions/]
     Script --> MolNetbird[molecule/netbird/]
 
-    MolDemo --> Prepare1[prepare.yml]
-    Prepare1 --> Converge1[converge.yml]
-    Converge1 --> Verify1[verify.yml]
-    Verify1 --> Shared1[Include shared/verify-common.yml]
-    Shared1 --> Cleanup1[cleanup.yml]
+    Shared[molecule/_shared/<br/>Common Resources] -.->|Vars| MolDemo
+    Shared -.->|Verify| MolDemo
+    Shared -.->|Cleanup| MolDemo
+    Shared -.->|Vars| MolGrafana
+    Shared -.->|Verify| MolGrafana
+    Shared -.->|Cleanup| MolGrafana
+
+    MolDemo --> Prepare1[prepare.yml<br/>Create networks]
+    Prepare1 --> Converge1[converge.yml<br/>Include _shared/common-vars.yml]
+    Converge1 --> Verify1[verify.yml<br/>Include _shared/verify-common.yml]
+    Verify1 --> Cleanup1[cleanup.yml<br/>Include _shared/cleanup-volumes.yml]
+    Cleanup1 --> Side1[side_effect<br/>_shared/cleanup-misc.yml]
 
     MolGrafana --> PrepareN[prepare.yml]
     PrepareN --> ConvergeN[converge.yml]
     ConvergeN --> VerifyN[verify.yml]
-    VerifyN --> SharedN[Include shared/verify-common.yml]
-    SharedN --> CleanupN[cleanup.yml]
+    VerifyN --> CleanupN[cleanup.yml]
+    CleanupN --> SideN[side_effect]
 
     style Test fill:#e1e8f5
     style Script fill:#e1f5e1
-    style Shared1 fill:#fff4e1
-    style SharedN fill:#fff4e1
+    style Shared fill:#fff4e1
 ```
 
 ## Key Components
