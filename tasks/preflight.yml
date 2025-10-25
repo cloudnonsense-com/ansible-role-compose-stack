@@ -25,12 +25,18 @@
       Please upgrade to Docker Compose v2.x
     quiet: true
 
+- name: "preflight | determine if any service requires networks"
+  ansible.builtin.set_fact:
+    services_need_networks: "{{ services | selectattr('network_mode', 'undefined') | list | length > 0 }}"
+
 - name: "preflight | verify required networks exist"
   community.docker.docker_network_info:
     name: "{{ item }}"
   loop: "{{ [stack.name] + stack.additional_networks }}"
   register: network_check
-  when: stack.additional_networks | length > 0
+  when:
+    - services_need_networks
+    - stack.additional_networks | length > 0
   failed_when: not network_check.exists
 
 ...

@@ -1,9 +1,6 @@
 ---
 - name: Prepare
   hosts: all
-  tasks:
-    - name: Create external Docker network for netbird stack
-      community.docker.docker_network:
-        name: "netbird-dev"
-        state: present
+  tasks: []
+  # No network creation needed - netbird uses host networking
 ...

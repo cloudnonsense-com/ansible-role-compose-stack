@@ -110,6 +110,20 @@ compose_stack_config:
 
 **Features:** Custom Dockerfile, automatic registration, DinD capability, org-level and repo-level scopes
 
+### netbird
+
+Netbird VPN mesh network client for secure peer-to-peer connectivity.
+
+**Required config:**
+```yaml
+compose_stack_config:
+  netbird:
+    hostname: "netbird-client"
+    setup_key: "your-netbird-setup-key"
+```
+
+**Network mode:** Uses `network_mode: host` for direct network access, required for VPN tunnel creation and network interface manipulation.
+
 ## Advanced Features
 
 ### Per-Service Overrides

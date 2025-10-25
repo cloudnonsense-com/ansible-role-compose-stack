@@ -1,8 +1,11 @@
 {# includes/networks.j2 #}
+{% set services_using_networks = services | selectattr('network_mode', 'undefined') | list %}
+{% if services_using_networks | length > 0 %}
 {%- set all_networks = [stack.name] + (stack.additional_networks | default([])) %}
 networks:
 {% for network in all_networks %}
   "{{ network }}":
     external: true
 {% endfor %}
+{% endif %}
 {# end #}
