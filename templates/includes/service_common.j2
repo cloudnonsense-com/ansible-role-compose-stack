@@ -1,5 +1,8 @@
 {# includes/service_common.j2 #}
     container_name: "{{ container_name }}"
+{% if svc_data.hostname is defined %}
+    hostname: "{{ svc_data.hostname }}"
+{% endif %}
 {% if svc_data.build is not defined %}
     image: "{{ compose_stack_config[svc_data.name].image | default(svc_data.image) }}"
 {% endif %}

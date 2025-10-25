@@ -2,6 +2,7 @@
 services:
   - name: "netbird"
     image: "netbirdio/netbird:latest"
+    hostname: "{{ compose_stack_config.netbird.hostname }}"
 
     capabilities:
       - "NET_ADMIN"
