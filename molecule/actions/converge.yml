@@ -12,7 +12,7 @@
         compose_stack_state: "present"
         compose_stack_expose_ports: "{{ global_compose_stack_expose_ports }}"
         compose_stack_config:
-          github_runner:
+          actions:
             runner_scope: "{{ lookup('env', 'RUNNER_SCOPE') | default('org', true) }}"
             github_organization: "{{ lookup('env', 'GITHUB_ORGANIZATION') }}"
             github_repository: "{{ lookup('env', 'GITHUB_REPOSITORY') | default('') }}"

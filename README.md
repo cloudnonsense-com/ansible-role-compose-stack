@@ -100,7 +100,7 @@ Self-hosted GitHub Actions runner with Docker-in-Docker build support.
 **Required config:**
 ```yaml
 compose_stack_config:
-  github_runner:
+  actions:
     runner_scope: "org"  # Optional: "org" (default) or "repo"
     github_organization: "your-org"
     github_repository: "your-repo"  # Required only when runner_scope is "repo"

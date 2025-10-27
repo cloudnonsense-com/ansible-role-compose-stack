@@ -1,21 +1,21 @@
 ---
 # Stack-specific validation for actions stack
 
-- name: Validate actions stack config - github_runner settings
+- name: Validate actions stack config - actions settings
   ansible.builtin.assert:
     that:
-      - compose_stack_config.github_runner is defined
-      - compose_stack_config.github_runner.github_organization is defined
-      - compose_stack_config.github_runner.github_organization | length > 0
-      - compose_stack_config.github_runner.github_access_token is defined
-      - compose_stack_config.github_runner.github_access_token | length > 0
-      - compose_stack_config.github_runner.runner_name is defined
-      - compose_stack_config.github_runner.runner_name | length > 0
+      - compose_stack_config.actions is defined
+      - compose_stack_config.actions.github_organization is defined
+      - compose_stack_config.actions.github_organization | length > 0
+      - compose_stack_config.actions.github_access_token is defined
+      - compose_stack_config.actions.github_access_token | length > 0
+      - compose_stack_config.actions.runner_name is defined
+      - compose_stack_config.actions.runner_name | length > 0
     fail_msg: |
       GitHub Actions runner configuration is required for actions stack.
       Please provide:
         compose_stack_config:
-          github_runner:
+          actions:
             runner_scope: "org"  # optional: "org" (default) or "repo"
             github_organization: "your-github-org"
             github_repository: "your-repo"  # required only when runner_scope is "repo"
@@ -42,13 +42,13 @@
 - name: Validate actions stack config - repository required for repo scope
   ansible.builtin.assert:
     that:
-      - compose_stack_config.github_runner.github_repository is defined
-      - compose_stack_config.github_runner.github_repository | length > 0
+      - compose_stack_config.actions.github_repository is defined
+      - compose_stack_config.actions.github_repository | length > 0
     fail_msg: |
       GITHUB_REPOSITORY is required when runner_scope is set to "repo".
       Please provide:
         compose_stack_config:
-          github_runner:
+          actions:
             runner_scope: "repo"
             github_repository: "your-repo-name"
 
@@ -56,7 +56,7 @@
     success_msg: "Repository configuration validated successfully for repo-scoped runner"
   when:
     - stack.state == "present"
-    - compose_stack_config.github_runner.runner_scope is defined
-    - compose_stack_config.github_runner.runner_scope == "repo"
+    - compose_stack_config.actions.runner_scope is defined
+    - compose_stack_config.actions.runner_scope == "repo"
   no_log: true
 ...

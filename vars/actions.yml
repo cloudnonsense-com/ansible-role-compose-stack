@@ -13,10 +13,10 @@ services:
       start_period: "60s"
 
     environment:
-      RUNNER_SCOPE: "{{ compose_stack_config.github_runner.runner_scope | default('org') }}"
-      GITHUB_ORGANIZATION: "{{ compose_stack_config.github_runner.github_organization }}"
-      GITHUB_REPOSITORY: "{{ compose_stack_config.github_runner.github_repository | default('') }}"
-      GITHUB_ACCESS_TOKEN: "{{ compose_stack_config.github_runner.github_access_token }}"
-      RUNNER_NAME: "{{ compose_stack_config.github_runner.runner_name }}"
-      RUNNER_LABELS: "{{ compose_stack_config.github_runner.runner_labels | default('self-hosted,linux,x64') }}"
+      RUNNER_SCOPE: "{{ compose_stack_config.actions.runner_scope | default('org') }}"
+      GITHUB_ORGANIZATION: "{{ compose_stack_config.actions.github_organization }}"
+      GITHUB_REPOSITORY: "{{ compose_stack_config.actions.github_repository | default('') }}"
+      GITHUB_ACCESS_TOKEN: "{{ compose_stack_config.actions.github_access_token }}"
+      RUNNER_NAME: "{{ compose_stack_config.actions.runner_name }}"
+      RUNNER_LABELS: "{{ compose_stack_config.actions.runner_labels | default('self-hosted,linux,x64') }}"
 ...
