@@ -43,6 +43,7 @@ ansible-galaxy install cloudnonsense.compose_stack
 | `compose_stack_additional_networks` | `[]` | External networks to attach |
 | `compose_stack_base_dir` | `/opt/apps` | Stack deployment directory |
 | `compose_stack_restart_policy` | `always` | Default container restart policy |
+| `compose_stack_expose_ports` | `false` | Expose service ports to host (false = more secure) |
 | `compose_stack_config` | `{}` | Stack-specific config + overrides |
 | `compose_stack_file_owner/group` | `root` | File ownership |
 | `compose_stack_file_mode` | `0644` | File permissions |

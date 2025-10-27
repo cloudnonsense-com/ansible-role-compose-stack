@@ -10,6 +10,7 @@
         compose_stack_type: "netbird"
         compose_stack_name: "netbird-dev"
         compose_stack_state: "present"
+        compose_stack_expose_ports: "{{ global_compose_stack_expose_ports }}"
         compose_stack_additional_networks: []  # Netbird doesn't need additional networks
         compose_stack_config:
           netbird:

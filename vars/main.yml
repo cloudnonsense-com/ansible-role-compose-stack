@@ -14,6 +14,7 @@ stack:
   additional_networks: "{{ compose_stack_additional_networks }}"
   base_dir: "{{ compose_stack_base_dir }}"
   restart: "{{ compose_stack_restart_policy }}"
+  expose_ports: "{{ compose_stack_expose_ports }}"
   src_file: "{{ compose_stack_src_file }}"
   dst_dir: "{{ compose_stack_dst_dir }}"
   file:

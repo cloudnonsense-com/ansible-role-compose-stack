@@ -10,6 +10,7 @@
         compose_stack_type: "actions"
         compose_stack_name: "actions-dev"
         compose_stack_state: "present"
+        compose_stack_expose_ports: "{{ global_compose_stack_expose_ports }}"
         compose_stack_config:
           github_runner:
             runner_scope: "{{ lookup('env', 'RUNNER_SCOPE') | default('org', true) }}"

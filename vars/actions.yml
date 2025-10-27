@@ -1,6 +1,6 @@
 ---
 services:
-  - name: "github-runner"
+  - name: "actions"
     build:
       context: "./build"
       dockerfile: "Dockerfile"

@@ -33,7 +33,8 @@ RUN apt-get update && apt-get install -y \
 RUN pip3 install --no-cache-dir --break-system-packages \
     yq \
     ansible-core==2.17.7 \
-    ansible==10.7.0
+    ansible==10.7.0 \
+    hcloud==2.9.0
 
 # Install Terraform from HashiCorp's official repository
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \

@@ -26,6 +26,7 @@
         compose_stack_type: "traefik"
         compose_stack_name: "traefik-dev"
         compose_stack_state: "present"
+        compose_stack_expose_ports: "{{ global_compose_stack_expose_ports }}"
         compose_stack_additional_networks: []  # Traefik doesn't need additional networks
         compose_stack_config:
           traefik:

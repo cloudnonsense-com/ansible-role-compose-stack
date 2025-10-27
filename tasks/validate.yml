@@ -20,7 +20,9 @@
       - stack.state in ['present', 'absent']
       - stack.dst_dir is defined
       - stack.dst_dir | length > 0
-    fail_msg: "Missing or invalid core stack variables. Required: stack.type, stack.name, stack.state (present|absent), stack.dst_dir"
+      - stack.expose_ports is defined
+      - stack.expose_ports is boolean
+    fail_msg: "Missing or invalid core stack variables. Required: stack.type, stack.name, stack.state (present|absent), stack.dst_dir, stack.expose_ports (boolean)"
     quiet: true
 
 - name: Check stack type vars file exists

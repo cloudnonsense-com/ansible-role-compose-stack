@@ -7,3 +7,6 @@ compose_stack_domain: "example.lan"
 # Common additional networks (e.g., traefik for ingress)
 compose_stack_additional_networks:
   - traefik-dev
+
+# Global flag for exposing ports in all test scenarios
+global_compose_stack_expose_ports: true
