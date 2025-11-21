@@ -1,0 +1,51 @@
+---
+services:
+  - name: "registry-srv"
+    image: "registry:2.8"
+    ports:
+      - "37022:5000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:5000/v2/ || exit 1"]
+      interval: "30s"
+      timeout: "10s"
+      retries: 3
+      start_period: "40s"
+    configs:
+      - source: "config.yml"
+        target: "/etc/docker/registry/config.yml"
+        uid: "0"
+        gid: "0"
+        mode: "0644"
+    volumes:
+      - "registry-data:/var/lib/registry"
+
+  - name: "registry-gui"
+    image: "joxit/docker-registry-ui:latest"
+    ports:
+      - "37021:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1/ || exit 1"]
+      interval: "30s"
+      timeout: "10s"
+      retries: 3
+      start_period: "30s"
+    labels:
+      traefik:
+        enabled: true
+        pattern: "default"
+      raw: []
+    environment:
+      SINGLE_REGISTRY: "false"
+      REGISTRY_TITLE: "Cloudnonsense Docker Registry"
+      DELETE_IMAGES: "true"
+      SHOW_CONTENT_DIGEST: "true"
+      NGINX_PROXY_PASS_URL: "http://{{ stack.name }}-registry-srv:5000"
+      SHOW_CATALOG_NB_TAGS: "true"
+      CATALOG_MIN_BRANCHES: "1"
+      CATALOG_MAX_BRANCHES: "1"
+      TAGLIST_PAGE_SIZE: "100"
+      REGISTRY_SECURED: "false"
+      CATALOG_ELEMENTS_LIMIT: "1000"
+    depends_on:
+      - "registry-srv"
+...

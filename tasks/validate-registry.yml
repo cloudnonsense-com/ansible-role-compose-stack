@@ -1,0 +1,8 @@
+---
+# Stack-specific validation for registry stack
+# Registry stack has no required config variables, so this file is intentionally minimal
+
+- name: Validate registry stack (no required config)
+  ansible.builtin.debug:
+    msg: "Registry stack has no required configuration variables"
+...

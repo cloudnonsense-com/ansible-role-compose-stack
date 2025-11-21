@@ -1,0 +1,14 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Create Docker networks for registry stack
+      community.docker.docker_network:
+        name: "{{ item }}"
+        driver: bridge
+        state: present
+      loop:
+        - registry-dev
+        - traefik-dev
+...

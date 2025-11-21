@@ -1,0 +1,14 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: True
+  vars_files:
+    - ../_shared/common-vars.yml
+  roles:
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "registry"
+        compose_stack_name: "registry-dev"
+        compose_stack_state: "present"
+        compose_stack_expose_ports: "{{ global_compose_stack_expose_ports }}"
+...

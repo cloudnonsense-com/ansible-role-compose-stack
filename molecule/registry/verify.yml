@@ -1,0 +1,10 @@
+---
+- name: Verify Registry Stack
+  hosts: all
+  gather_facts: False
+  vars:
+    compose_stack_name: "registry-dev"
+  tasks:
+    - name: Include shared verification tasks
+      ansible.builtin.include_tasks: ../_shared/verify-common.yml
+...
