@@ -145,6 +145,7 @@ graph LR
     Role --> Traefik[traefik<br/>Reverse Proxy]
     Role --> Runner[actions<br/>GitHub Runner]
     Role --> Netbird[netbird<br/>VPN Client]
+    Role --> Registry[registry<br/>Docker Registry v2]
 
     Demo --> DemoAssets[No Custom Assets]
 
@@ -154,7 +155,9 @@ graph LR
 
     Runner --> RunnerAssets[templates/actions/build/<br/>Dockerfile + Entrypoint]
 
-    Netbird --> NetbirdAssets[Bridged Network Mode<br/>Experimental]
+    Netbird --> NetbirdAssets[Host Network Mode<br/>For VPN Tunnel]
+
+    Registry --> RegistryAssets[templates/registry/<br/>Config File]
 
     style Role fill:#e1e8f5
     style Demo fill:#fff4e1
@@ -162,6 +165,7 @@ graph LR
     style Traefik fill:#fff4e1
     style Runner fill:#fff4e1
     style Netbird fill:#fff4e1
+    style Registry fill:#fff4e1
 ```
 
 ## Testing Structure
@@ -174,6 +178,7 @@ flowchart TD
     Script --> MolTraefik[molecule/traefik/]
     Script --> MolRunner[molecule/actions/]
     Script --> MolNetbird[molecule/netbird/]
+    Script --> MolRegistry[molecule/registry/]
 
     Shared[molecule/_shared/<br/>Common Resources] -.->|Vars| MolDemo
     Shared -.->|Verify| MolDemo
@@ -214,7 +219,7 @@ flowchart TD
 ### Network Architecture
 - Auto-generated network: `{{ stack.name }}`
 - Additional networks: `stack.additional_networks` (must exist externally)
-- Netbird uses experimental bridged mode instead of `network_mode: host`
+- Netbird uses `network_mode: host` for direct network access (required for VPN tunneling)
 
 ### Build Context
 - Auto-detected via `build` attribute in service definition

@@ -32,7 +32,7 @@ ansible-galaxy install cloudnonsense.compose_stack
 ### Configuration
 
 **Required:**
-- `compose_stack_type` - Stack type (demo/grafana/traefik/actions)
+- `compose_stack_type` - Stack type (demo/grafana/traefik/actions/netbird/registry)
 - `compose_stack_name` - Unique stack identifier
 - `compose_stack_state` - `present` or `absent`
 
@@ -124,6 +124,18 @@ compose_stack_config:
 ```
 
 **Network mode:** Uses `network_mode: host` for direct network access, required for VPN tunnel creation and network interface manipulation.
+
+### registry
+
+Docker Registry v2 with web UI for container image storage and management.
+
+**Required config:** None (works out of the box)
+
+**Services:**
+- Registry v2 (port 37022) - Docker Registry server with delete support
+- Registry UI (port 37021) - Web interface for browsing and managing images
+
+**Features:** Image deletion, content digest display, CORS support for web UI
 
 ## Advanced Features
 

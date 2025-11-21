@@ -50,6 +50,7 @@ molecule converge -s demo && molecule verify -s demo
 | `traefik` | Reverse proxy v3 | `templates/traefik/` configs + certs |
 | `actions` | GitHub Actions runner | `templates/actions/build/` Dockerfile + entrypoint |
 | `netbird` | VPN mesh network client | - |
+| `registry` | Docker Registry v2 + web UI | `templates/registry/` config file |
 
 ## Adding a Stack
 
@@ -69,6 +70,7 @@ molecule converge -s demo && molecule verify -s demo
 - **Destroy options**: `compose_stack_destroy_remove_volumes` (bool), `compose_stack_destroy_remove_images` (all/local)
 - **Compatibility**: Docker Compose v2.40.1+ (`docker compose` not `docker-compose`)
 - **Shared resources**: All scenarios use `molecule/_shared/` for common vars, verification, and cleanup tasks
-- **Netbird networking**: Uses experimental bridged networking (standard Docker network) instead of official `network_mode: host`. May require host networking if connectivity issues occur.
+- **Netbird networking**: Uses `network_mode: host` for VPN tunnel creation (requires host network access)
 - **Healthchecks**: Mandatory for all stacks
 - **Actions runner**: Supports both org-level (default) and repo-level deployment scopes with appropriate token permissions
+- **Port exposure**: Controlled via `compose_stack_expose_ports` flag (default: false for enhanced security)
