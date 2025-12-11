@@ -16,13 +16,13 @@
   register: compose_check
   failed_when: compose_check.rc != 0
 
-- name: "preflight | verify Docker Compose version is v2"
+- name: "preflight | verify Docker Compose version is v2 or higher"
   ansible.builtin.assert:
     that:
-      - "'v2.' in compose_check.stdout or 'version 2.' in compose_check.stdout"
+      - "compose_check.stdout is regex('v([2-9]|[1-9][0-9]+)\\.')"
     fail_msg: |
-      Docker Compose v2 is required. Found: {{ compose_check.stdout }}
-      Please upgrade to Docker Compose v2.x
+      Docker Compose v2 or higher is required. Found: {{ compose_check.stdout }}
+      Please upgrade to Docker Compose v2.x or higher
     quiet: true
 
 - name: "preflight | determine if any service requires networks"
