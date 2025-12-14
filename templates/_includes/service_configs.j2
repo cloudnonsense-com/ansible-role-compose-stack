@@ -1,8 +1,14 @@
 {# _includes/service_configs.j2 #}
-{% if svc_data.configs is defined and svc_data.configs | length > 0 %}
+{% set use_external = compose_stack_config[svc_data.name].external_configs | default(false) %}
+{% set config_list = compose_stack_config[svc_data.name].configs if use_external else svc_data.configs | default([]) %}
+{% if config_list | length > 0 %}
     configs:
-{% for config in svc_data.configs %}
+{% for config in config_list %}
+{% if use_external %}
+      - source: "{{ config.source | basename | regex_replace('\\.j2$', '') }}"
+{% else %}
       - source: "{{ config.source | regex_replace('\\.j2$', '') }}"
+{% endif %}
         target: "{{ config.target }}"
 {% if config.uid is defined %}
         uid: "{{ config.uid }}"

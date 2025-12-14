@@ -1,0 +1,33 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Create Docker networks for demo-extcfg stack
+      community.docker.docker_network:
+        name: "{{ item }}"
+        driver: bridge
+        state: present
+      loop:
+        - demo-extcfg
+        - traefik-dev
+
+    - name: Create external configs directory on controller
+      ansible.builtin.file:
+        path: /tmp/external-configs
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+
+    - name: Create external config file on controller
+      ansible.builtin.copy:
+        dest: /tmp/external-configs/custom-index.html.j2
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head><title>External Config Test</title></head>
+          <body><h1>Hello from external config - {{ '{{' }} stack.name {{ '}}' }}</h1></body>
+          </html>
+        mode: '0644'
+      delegate_to: localhost
+...

@@ -1,0 +1,20 @@
+---
+- name: Cleanup
+  hosts: all
+  gather_facts: True
+  roles:
+    - role: cloudnonsense.compose_stack
+      vars:
+        compose_stack_type: "demo"
+        compose_stack_name: "demo-extcfg"
+        compose_stack_state: "absent"
+  post_tasks:
+    - name: Include shared volume cleanup tasks
+      ansible.builtin.include_tasks: ../_shared/cleanup-volumes.yml
+
+    - name: Remove external configs test directory from controller
+      ansible.builtin.file:
+        path: /tmp/external-configs
+        state: absent
+      delegate_to: localhost
+...

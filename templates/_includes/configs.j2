@@ -16,10 +16,39 @@
   - Other files are copied as-is
   - The .j2 suffix is stripped from the Docker config name
 #}
-{% set all_configs = services | selectattr('configs', 'defined') | map(attribute='configs') | flatten | list %}
+{# Collect internal configs from services that don't have external_configs enabled #}
+{% set internal_configs = [] %}
+{% for svc in services %}
+{% if not (compose_stack_config[svc.name].external_configs | default(false)) %}
+{% if svc.configs is defined %}
+{% for cfg in svc.configs %}
+{% set _ = internal_configs.append({'source': cfg.source, 'is_external': false}) %}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{# Collect external configs from compose_stack_config #}
+{% set external_configs = [] %}
+{% for svc in services %}
+{% if compose_stack_config[svc.name].external_configs | default(false) %}
+{% for cfg in compose_stack_config[svc.name].configs | default([]) %}
+{% set _ = external_configs.append({'source': cfg.source, 'is_external': true}) %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% set all_configs = internal_configs + external_configs %}
 {% if all_configs | length > 0 %}
 configs:
 {% for config in all_configs %}
+{% if config.is_external %}
+  "{{ config.source | basename | regex_replace('\\.j2$', '') }}":
+    content: |
+{% if config.source.endswith('.j2') %}
+      {{ lookup('template', config.source) | replace('$', '$$') | indent(6) }}
+{% else %}
+      {{ lookup('file', config.source) | replace('$', '$$') | indent(6) }}
+{% endif %}
+{% else %}
   "{{ config.source | regex_replace('\\.j2$', '') }}":
     content: |
 {% set file_path = role_path ~ '/templates/' ~ stack.type ~ '/' ~ config.source %}
@@ -27,6 +56,7 @@ configs:
       {{ lookup('template', file_path) | replace('$', '$$') | indent(6) }}
 {% else %}
       {{ lookup('file', file_path) | replace('$', '$$') | indent(6) }}
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endif %}

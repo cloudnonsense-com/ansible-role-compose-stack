@@ -1,0 +1,21 @@
+---
+- name: Verify Demo External Configs Stack
+  hosts: all
+  gather_facts: False
+  vars:
+    compose_stack_name: "demo-extcfg"
+  tasks:
+    - name: Include shared verification tasks
+      ansible.builtin.include_tasks: ../_shared/verify-common.yml
+
+    - name: Get nginx response via docker exec
+      ansible.builtin.command: docker exec demo-extcfg-nginx wget -qO- http://localhost:80/
+      register: response
+      changed_when: false
+
+    - name: Assert external config content is served
+      ansible.builtin.assert:
+        that:
+          - "'Hello from external config' in response.stdout"
+        fail_msg: "External config content not found in response: {{ response.stdout }}"
+...
