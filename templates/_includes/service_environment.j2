@@ -1,4 +1,4 @@
-{# includes/service_environment.j2 #}
+{# _includes/service_environment.j2 #}
 {% if svc_data.environment is defined and svc_data.environment is mapping %}
     env_file:
       - ".env.{{ svc_data.name }}"

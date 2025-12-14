@@ -1,4 +1,4 @@
-{# includes/service_ports.j2 #}
+{# _includes/service_ports.j2 #}
 {% if stack.expose_ports and svc_data.ports is defined and svc_data.ports | length > 0 %}
     ports:
 {% for port in svc_data.ports %}

@@ -82,10 +82,10 @@ flowchart LR
 
     Services --> Template[templates/compose.yml.j2]
 
-    Template --> IncCommon[includes/service_common.j2]
-    Template --> IncBuild[includes/service_build.j2]
-    Template --> IncCaps[includes/service_capabilities.j2]
-    Template --> IncConfigs[includes/configs.j2]
+    Template --> IncCommon[_includes/service_common.j2]
+    Template --> IncBuild[_includes/service_build.j2]
+    Template --> IncCaps[_includes/service_capabilities.j2]
+    Template --> IncConfigs[_includes/configs.j2]
 
     IncCommon --> Final[Final compose.yml]
     IncBuild --> Final

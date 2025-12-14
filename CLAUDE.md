@@ -17,10 +17,10 @@ Developer guidance for this Ansible role managing Docker Compose v2 stacks.
 **Config Flow**: `compose_stack_*` vars (defaults/main.yml) → `stack` dict (vars/main.yml). Stack defs in `vars/{{ type }}.yml` (opinionated, hardcoded).
 
 **Templates**: `templates/compose.yml.j2` + modular includes:
-- `includes/service_common.j2` - Base service config
-- `includes/service_build.j2` - Build context handling
-- `includes/service_capabilities.j2` - Linux capabilities (cap_add)
-- `includes/configs.j2` - Docker configs
+- `_includes/service_common.j2` - Base service config
+- `_includes/service_build.j2` - Build context handling
+- `_includes/service_capabilities.j2` - Linux capabilities (cap_add)
+- `_includes/configs.j2` - Docker configs
 - Loops `services` list, each item becomes `svc_data`
 
 **Networks**: Auto-generated `{{ stack.name }}` + `stack.additional_networks`. Must exist externally.

@@ -1,4 +1,4 @@
-{# includes/service_networks.j2 #}
+{# _includes/service_networks.j2 #}
 {% if svc_data.network_mode is not defined %}
 {%- set all_networks = [stack.name] + (stack.additional_networks | default([])) %}
     networks:

@@ -1,4 +1,4 @@
-{# includes/service_volumes.j2 #}
+{# _includes/service_volumes.j2 #}
 {% if (svc_data.volumes is defined and svc_data.volumes | length > 0) or (svc_data.bind_mounts is defined and svc_data.bind_mounts | length > 0) %}
     volumes:
 {% if svc_data.volumes is defined %}
