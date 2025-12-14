@@ -7,11 +7,3 @@
       ansible.builtin.command: docker network prune -f
       register: network_prune_result
       changed_when: "'Deleted Networks:' in network_prune_result.stdout"
-
-    - name: Clean up test certificate files
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - /tmp/traefik-test.crt
-        - /tmp/traefik-test.key

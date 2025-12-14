@@ -1,0 +1,9 @@
+---
+tls:
+  stores:
+    default:
+      defaultGeneratedCert:
+        domain:
+          main: {{ compose_stack_domain | default('localhost') }}
+          sans:
+            - "*.{{ compose_stack_domain | default('localhost') }}"
