@@ -20,7 +20,7 @@ services:
       raw: []
 
     configs:
-      - source: "index.nginx-debian.html"
+      - source: "index.nginx-debian.html.j2"
         target: "/usr/share/nginx/html/index.html"
         uid: "0"
         gid: "0"

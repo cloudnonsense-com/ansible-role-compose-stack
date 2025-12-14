@@ -10,19 +10,23 @@
   Example: "id = ${USER_ID}" → "id = $${USER_ID}"
 
   The replace('$', '$$') filter auto-escapes both .j2 templates and static files.
+
+  Config File Handling:
+  - Files ending in .j2 are processed as Jinja2 templates
+  - Other files are copied as-is
+  - The .j2 suffix is stripped from the Docker config name
 #}
 {% set all_configs = services | selectattr('configs', 'defined') | map(attribute='configs') | flatten | list %}
 {% if all_configs | length > 0 %}
 configs:
 {% for config in all_configs %}
-  "{{ config.source }}":
+  "{{ config.source | regex_replace('\\.j2$', '') }}":
     content: |
-{% set template_path = role_path ~ '/templates/' ~ stack.type ~ '/' ~ config.source ~ '.j2' %}
-{% set raw_path = role_path ~ '/templates/' ~ stack.type ~ '/' ~ config.source %}
-{% if template_path is file %}
-      {{ lookup('template', template_path) | replace('$', '$$') | indent(6) }}
+{% set file_path = role_path ~ '/templates/' ~ stack.type ~ '/' ~ config.source %}
+{% if config.source.endswith('.j2') %}
+      {{ lookup('template', file_path) | replace('$', '$$') | indent(6) }}
 {% else %}
-      {{ lookup('file', raw_path) | replace('$', '$$') | indent(6) }}
+      {{ lookup('file', file_path) | replace('$', '$$') | indent(6) }}
 {% endif %}
 {% endfor %}
 {% endif %}

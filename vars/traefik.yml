@@ -26,12 +26,12 @@ services:
         - 'traefik.http.routers.__CONTAINER_NAME__-https.service=api@internal'
 
     configs:
-      - source: "traefik.yaml"
+      - source: "traefik.yaml.j2"
         target: "/etc/traefik/traefik.yaml"
         uid: "0"
         gid: "0"
         mode: "0644"
-      - source: "tls.yml"
+      - source: "tls.yml.j2"
         target: "/etc/traefik/tls.yml"
         uid: "0"
         gid: "0"

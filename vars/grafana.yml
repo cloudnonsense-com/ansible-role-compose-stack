@@ -19,7 +19,7 @@ services:
         pattern: "default"
       raw: []
     configs:
-      - source: "datasources.yaml"
+      - source: "datasources.yaml.j2"
         target: "/etc/grafana/provisioning/datasources/datasources.yaml"
         uid: "0"
         gid: "0"

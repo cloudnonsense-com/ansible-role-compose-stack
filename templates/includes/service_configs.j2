@@ -2,7 +2,7 @@
 {% if svc_data.configs is defined and svc_data.configs | length > 0 %}
     configs:
 {% for config in svc_data.configs %}
-      - source: "{{ config.source }}"
+      - source: "{{ config.source | regex_replace('\\.j2$', '') }}"
         target: "{{ config.target }}"
 {% if config.uid is defined %}
         uid: "{{ config.uid }}"

@@ -11,7 +11,7 @@ services:
       retries: 3
       start_period: "40s"
     configs:
-      - source: "config.yml"
+      - source: "config.yml.j2"
         target: "/etc/docker/registry/config.yml"
         uid: "0"
         gid: "0"
